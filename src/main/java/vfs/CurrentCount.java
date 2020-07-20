@@ -1,0 +1,115 @@
+package vfs;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+
+public class CurrentCount {
+
+    public LinkedList<Counter> getMinuteCount() {
+        return minuteCount;
+    }
+
+    public void setMinuteCount(LinkedList<Counter> minuteCount) {
+        this.minuteCount = minuteCount;
+    }
+
+    public int getPrevCount() {
+        return prevCount;
+    }
+
+    public void setPrevCount(int prevCount) {
+        this.prevCount = prevCount;
+    }
+
+    static class Counter
+    {
+        int count=0;
+
+        public int getCount() {
+            return count;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
+        }
+    }
+
+    LinkedList<Counter> minuteCount;
+
+    int prevCount=0;
+
+
+    public CurrentCount()
+    {
+        minuteCount = new LinkedList<>();
+
+        for (int i=0;i<5;i++)
+        {
+            minuteCount.add(new Counter());
+        }
+
+    }
+
+
+
+    public synchronized void increment()
+    {
+        minuteCount.getLast().count++;
+    }
+
+    @JsonIgnore
+    public synchronized int getDayCount()
+    {
+        int totCount=prevCount + getLast5MinCount();
+
+
+        return totCount;
+    }
+
+
+    @JsonIgnore
+    public synchronized int getLast5MinCount()
+    {
+        int totCount=0;
+
+        Iterator<Counter> iterator = minuteCount.iterator();
+        while(iterator.hasNext())
+        {
+            Counter counter = iterator.next();
+            totCount+=counter.count;
+        }
+
+        return totCount;
+    }
+
+
+
+
+    public static void main(String[] args) throws Exception  {
+
+        CurrentCount currentCount = new CurrentCount();
+        for (int i=0;i<100;i++)
+        {
+            currentCount.increment();
+
+            System.out.println(currentCount.getDayCount()  + "  " + currentCount.getLast5MinCount());
+
+            Thread.sleep(30000);
+        }
+
+
+
+
+    }
+
+    @Override
+    public String toString() {
+        return "CurrentCount{" +
+                "prevCount=" + getDayCount() +
+                "Last%MinCount=" + getLast5MinCount() +
+
+                '}';
+    }
+}
