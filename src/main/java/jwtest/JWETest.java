@@ -26,7 +26,7 @@ public class JWETest {
 
       //  System.out.println(decrypt(key,verify(keyPair.getPublic(),str).orElseThrow()));
 
-        testECDH();
+        //testECDH();
     }
 
 
@@ -98,7 +98,7 @@ public class JWETest {
     }
 
 
-    private static void testECDH() throws Exception
+ /*   private static void testECDH() throws Exception
     {
           String payload = "JWE and JWS demonstrator using ECDH-ES and AES";
 
@@ -129,7 +129,7 @@ public class JWETest {
 
 
 
-    }
+    }*/
 
 
 

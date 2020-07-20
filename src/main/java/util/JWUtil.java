@@ -1,5 +1,6 @@
 package util;
 
+import jwtest.Header;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
@@ -9,6 +10,7 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwx.Headers;
 import org.jose4j.lang.JoseException;
 
 import javax.crypto.SecretKey;
@@ -17,15 +19,17 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class JWUtil {
 
    // public enum SignType { Complete , Compressed }
 
 
-    public static void createKeys(Map<String,PublicJsonWebKey> publicJsonWebKeyMap , Map<String,PublicJsonWebKey> privateJsonWebKeyMap,String name)
+    public static void createKeys(Map<String,PublicJsonWebKey> publicJsonWebKeyMap , Map<String,PublicJsonWebKey> privateJsonWebKeyMap,String prepend)
     {
         for (int i=0;i<10;i++) {
             try {
@@ -33,9 +37,10 @@ public class JWUtil {
                 gen.initialize(256);
                 KeyPair keyPair = gen.generateKeyPair();
 
+                String name = prepend + "_" + UUID.randomUUID().toString();
 
-                publicJsonWebKeyMap.put(name+i, createECJWK(keyPair, name+i, false));
-                privateJsonWebKeyMap.put(name+i, createECJWK(keyPair, name+i, true));
+                publicJsonWebKeyMap.put(name, createECJWK(keyPair, name, false));
+                privateJsonWebKeyMap.put(name, createECJWK(keyPair, name, true));
 
 
             } catch (Exception e) {
@@ -46,7 +51,7 @@ public class JWUtil {
 
     }
 
-    public static String encrypt(PublicJsonWebKey encrypterKey, String payload) throws Exception
+    public static String encrypt(List<Header> headers , PublicJsonWebKey encrypterKey, String payload) throws Exception
     {
 
             String alg = KeyManagementAlgorithmIdentifiers.ECDH_ES_A256KW;
@@ -65,6 +70,10 @@ public class JWUtil {
             jwe.setContentTypeHeaderValue("JWT");
 
             jwe.setKeyIdHeaderValue(encrypterKey.getKeyId());
+
+            headers.stream().forEach(header-> jwe.setHeader(header.getName(),header.getValue()));
+
+
 
 
         String compactSerialization = jwe.getCompactSerialization();

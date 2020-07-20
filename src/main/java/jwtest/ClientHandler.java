@@ -11,12 +11,16 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.jwx.HeaderParameterNames;
+import util.JSONUtil;
 import util.JWUtil;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static jwtest.JWSTest.createECJWKForSigning;
 import static jwtest.JWSTest.createECJWKForVerifying;
@@ -38,7 +42,7 @@ public class ClientHandler {
     Map<String,PublicJsonWebKey> signPrivKReceiverMap = new HashMap<>();
 
 
-    public JsonWebKeySet getKAandSignPubKeys()
+    public String getKAandSignPubKeys()
     {
      //   JsonWebKeySet set = new JsonWebKeySet(kaPubKReceiver,signPubKReceiver);
 
@@ -49,7 +53,9 @@ public class ClientHandler {
 
         //   System.out.println(set.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
 
-        return set;
+
+
+         return set.toJson();
     }
 
     Sender sender;
@@ -64,7 +70,9 @@ public class ClientHandler {
     public void init(Sender sender) throws Exception
     {
 
-        JsonWebKeySet set = sender.getKAandSignPubKeys();
+        String jsonWebKeySet = sender.getKAandSignPubKeys();
+        JsonWebKeySet set = new JsonWebKeySet(jsonWebKeySet);
+
 
         set.getJsonWebKeys().stream().filter(key->key.getKeyId().startsWith("sign")).forEach(key->{ signSenderKeys.put(key.getKeyId(),key);});
         set.getJsonWebKeys().stream().filter(key->key.getKeyId().startsWith("ka")).forEach(key->{ kaSenderKeys.put(key.getKeyId(),key);});
@@ -112,7 +120,14 @@ public class ClientHandler {
 
         PublicJsonWebKey signPrivKReceiver = signPrivKReceiverMap.values().stream().findAny().get();
 
-        String str = encrypt(kaPubKSender,sign(signPrivKReceiver,payload));
+        //   jwe.setHeader(HeaderParameterNames.AGREEMENT_PARTY_U_INFO, UUID.randomUUID().toString());
+        //        jwe.setHeader(HeaderParameterNames.AGREEMENT_PARTY_V_INFO, UUID.randomUUID().toString());
+
+
+        Header header = new Header(HeaderParameterNames.AGREEMENT_PARTY_V_INFO, UUID.randomUUID().toString());
+        var headers = List.of(header);
+
+        String str = encrypt(headers , kaPubKSender,sign(signPrivKReceiver,payload));
 
         sender.recvMessageFromReceover(str);
 
