@@ -1,4 +1,4 @@
-package jwtest;
+package mynimbus;
 
 public final class Header {
 

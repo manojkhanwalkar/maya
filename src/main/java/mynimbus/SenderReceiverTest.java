@@ -1,6 +1,6 @@
-package jwtest;
+package mynimbus;
 
-import util.JSONUtil;
+
 
 public class SenderReceiverTest {
 
@@ -22,11 +22,11 @@ public class SenderReceiverTest {
             sender2.init(clientHandler);
         }
 
-        for (int i=0;  i<10;i++)
+        for (int i=0;  i<1;i++)
         {
 
-            sender.sendMessagetoReceiver(JSONUtil.toJSON("From sender1 to the clientHandler"));
-            sender2.sendMessagetoReceiver(JSONUtil.toJSON("From senderrrrrrrrrrrrrr 2 to the clientHandler"));
+            sender.sendMessagetoReceiver("From sender1 to the clientHandler in the Nimbus world ");
+            sender2.sendMessagetoReceiver("From senderrrrrrrrrrrrrr 2 to the clientHandler in the Nimbus World ");
 
         }
 
