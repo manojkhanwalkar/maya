@@ -1,22 +1,23 @@
 package vfs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VelocityStatsList {
 
-   HashMap<String, VelocityStats> stats = new HashMap<>();
+   ArrayList<VelocityStats> stats = new ArrayList<>();
 
-    public HashMap<String, VelocityStats> getStats() {
+    public ArrayList<VelocityStats> getStats() {
         return stats;
     }
 
-    public void setStats(HashMap<String, VelocityStats> stats) {
+    public void setStats(ArrayList<VelocityStats> stats) {
         this.stats = stats;
     }
 
-    public void addStats(String name, VelocityStats vs)
+    public void addStats(VelocityStats vs)
     {
-        stats.put(name,vs);
+        stats.add(vs);
     }
 
     @Override

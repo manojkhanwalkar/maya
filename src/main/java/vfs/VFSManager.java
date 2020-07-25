@@ -86,7 +86,9 @@ public class VFSManager {
             if (velocityStatsManager!=null)
             {
                 VelocityStats velocityStats = velocityStatsManager.add(value);
-                velocityStatsList.addStats(key,velocityStats);
+                velocityStats.setType(key);
+                velocityStats.setValue(value);
+                velocityStatsList.addStats(velocityStats);
             }
         });
 

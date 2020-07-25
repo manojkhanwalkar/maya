@@ -2,8 +2,32 @@ package vfs;
 
 public class VelocityStats {
 
-    HistoricalCount historicalCount;
+
+    String type;
+
+    String value;
+
     CurrentCount currentCount;
+
+    HistoricalCount historicalCount;
+
+
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 
     public HistoricalCount getHistoricalCount() {
         return historicalCount;
@@ -26,6 +50,8 @@ public class VelocityStats {
         return "VelocityStats{" +
                 "historicalCount=" + historicalCount +
                 ", currentCount=" + currentCount +
+                ", type='" + type + '\'' +
+                ", value='" + value + '\'' +
                 '}';
     }
 }
