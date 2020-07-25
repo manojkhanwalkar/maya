@@ -2,12 +2,16 @@ package ccvid;
 
 
 import com.codahale.metrics.annotation.Timed;
+import com.nimbusds.jose.JWEObject;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
 import data.*;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.text.ParseException;
 import java.util.Random;
 
 
@@ -29,7 +33,7 @@ public class CCVIDResource {
 
 
 
-Random random = new Random() ;
+ClientCache clientCache = new ClientCache();
 
 
     @POST
@@ -39,26 +43,50 @@ Random random = new Random() ;
     public KeyExchange keyexchange(KeyExchange request) {
 
 
-        ClientHandler clientHandler = new ClientHandler();
-        clientHandler.init(request.getJavawebKeySet());
+        try {
+            ClientHandler clientHandler = new ClientHandler();
+            clientHandler.init(request.getJavawebKeySet());
 
 
-        KeyExchange response = new KeyExchange();
-        response.setJavawebKeySet(clientHandler.getKAandSignPubKeys());
+            KeyExchange response = new KeyExchange();
+            response.setJavawebKeySet(clientHandler.getKAandSignPubKeys());
 
-        return response;
+            clientCache.put(JWKSet.parse(request.getJavawebKeySet()),clientHandler);
+            clientCache.put(JWKSet.parse(response.getJavawebKeySet()),clientHandler);
+
+            return response;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 
 
-  /*  @POST
+    @POST
     @Timed
     @Path("/verify")
     @Produces(MediaType.APPLICATION_JSON)
     public Response verify(EncryptedSignedRequest request) {
 
-        return null;
-    }*/
+        try {
+            String payload = request.getEncryptedSignedPayload();
+
+            var jweObject = JWEObject.parse(payload);
+
+            String keyId = jweObject.getHeader().getKeyID();
+
+            ClientHandler clientHandler = clientCache.get(keyId).orElseThrow();
+
+            clientHandler.recvMessageFromSender(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return new Response();
+    }
 
 
 
