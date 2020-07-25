@@ -31,11 +31,6 @@ public class PMApplication extends Application<PMConfiguration> {
                 configuration.getDefaultName()
         );
 
-     /*   DiscoveryLifeCycle myManagedObject = new DiscoveryLifeCycle(Constants.BureauServiceUrl,Constants.BureauServiceType, Constants.BureauServiceHealthUrl);
-        environment.lifecycle().manage(myManagedObject);
-
-        CreditManagerFactory creditManagerFactory = CreditManagerFactory.getInstance();
-        creditManagerFactory.init();*/
 
         environment.jersey().register(resource);
       //  environment.healthChecks().register("APIHealthCheck", new AppHealthCheck());
