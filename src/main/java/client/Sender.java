@@ -1,0 +1,184 @@
+package client;
+
+
+
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import data.EncryptedSignedRequest;
+import data.KeyExchange;
+import data.Request;
+import mynimbus.ClientHandler;
+import mynimbus.Header;
+import util.Connection;
+import util.JSONUtil;
+import util.JWUtil;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static util.JWUtil.*;
+
+
+public class Sender {
+
+
+
+    Map<String, JWK> kaPubKSenderMap = new HashMap<>();
+    Map<String,JWK> kaPrivKSenderMap = new HashMap<>();
+    Map<String,JWK> signPubKSenderMap = new HashMap<>();
+    Map<String,JWK> signPrivKSenderMap = new HashMap<>();
+
+
+
+
+
+    public String getKAandSignPubKeys()
+    {
+
+        List<JWK> list = new ArrayList<>();
+        list.addAll(kaPubKSenderMap.values()) ;
+        list.addAll(signPubKSenderMap.values() ) ;
+        JWKSet set = new JWKSet(list);
+        return set.toJSONObject().toJSONString();
+
+
+
+    }
+
+
+
+
+    private void createKeys()
+    {
+        JWUtil.createKeys(signPubKSenderMap,signPrivKSenderMap,"signSender");
+
+        JWUtil.createKeys(kaPubKSenderMap,kaPrivKSenderMap,"kaSender");
+
+
+    }
+
+
+
+
+    public Sender()
+    {
+
+
+        createKeys();
+
+    }
+
+    Map<String,JWK> signreceiverKeys = new HashMap<>();
+    Map<String,JWK> kareceiverKeys = new HashMap<>();
+
+    public void init() throws Exception
+    {
+
+        KeyExchange request = new KeyExchange();
+        request.setJavawebKeySet(getKAandSignPubKeys());
+
+        String jsonWebKeySet = keyExchange(request).getJavawebKeySet();
+        JWKSet set = JWKSet.parse(jsonWebKeySet);
+
+        set.getKeys().stream().filter(key->key.getKeyID().startsWith("sign")).forEach(key->{ signreceiverKeys.put(key.getKeyID(),key);});
+        set.getKeys().stream().filter(key->key.getKeyID().startsWith("ka")).forEach(key->{ kareceiverKeys.put(key.getKeyID(),key);});
+
+
+
+    }
+
+
+    private  KeyExchange  keyExchange(KeyExchange request)
+    {
+        // send to scheduler a jar file and client name and get back a job id .
+
+        Connection app = new Connection("https://localhost:8180/");
+
+        System.out.println("Sending keys" + request.getJavawebKeySet());
+
+        String result = app.sendSimple(JSONUtil.toJSON(request),"keyexchange");
+
+        KeyExchange keyExchange = (KeyExchange) JSONUtil.fromJSON(result,KeyExchange.class);
+
+        System.out.println("Received keys " + request.getJavawebKeySet());
+
+        return  keyExchange;
+
+    }
+
+
+    private  void  VerifyRequest(EncryptedSignedRequest request)
+    {
+        // send to scheduler a jar file and client name and get back a job id .
+
+        Connection app = new Connection("https://localhost:8180/");
+
+        String result = app.sendSimple(JSONUtil.toJSON(request),"verify");
+
+        System.out.println(result);
+
+   //     KeyExchange keyExchange = (KeyExchange) JSONUtil.fromJSON(result,KeyExchange.class);
+
+//        return  keyExchange;
+
+    }
+
+
+
+
+
+    public void sendMessagetoCCVId(Request request) throws Exception
+    {
+        Random random = new Random();
+
+        String payload = JSONUtil.toJSON(request);
+
+        EncryptedSignedRequest esRequest = new EncryptedSignedRequest();
+
+        int max = random.nextInt(kareceiverKeys.size());
+
+        JWK kaPubKReceiver = kareceiverKeys.values().stream().collect(Collectors.toList()).get(max);
+
+        max = random.nextInt(kareceiverKeys.size());
+
+        JWK signPrivKSender = signPrivKSenderMap.values().stream().collect(Collectors.toList()).get(max);
+
+        System.out.println("Encrypt key " + kaPubKReceiver.getKeyID() + " " + "Sign Key " + signPrivKSender.getKeyID());
+
+        //        jwe.setHeader(HeaderParameterNames.AGREEMENT_PARTY_V_INFO, UUID.randomUUID().toString());
+
+      //  Header header = new Header(HeaderParameterNames.AGREEMENT_PARTY_U_INFO, UUID.randomUUID().toString());
+        List<Header> headers = List.of();
+
+        String str = encrypt(headers , kaPubKReceiver,sign(signPrivKSender,payload));
+
+        esRequest.setEncryptedSignedPayload(str);
+
+        VerifyRequest(esRequest);
+
+        //TODO - process the incoming reqponse .
+
+       // clientHandler.recvMessageFromSender(str);
+    }
+
+
+    public void recvMessageFromReceover(String message) throws Exception
+    {
+        String decryptedMsg = decrypt(kaPrivKSenderMap,message);
+
+       // System.out.println(decryptedMsg);
+
+//        String payload = verify(signPubKReceiver.getPublicKey(),decryptedMsg).get();
+
+        String payload = verify(signreceiverKeys,decryptedMsg).get();
+
+
+        System.out.println(payload);
+
+    }
+
+
+
+
+
+}
