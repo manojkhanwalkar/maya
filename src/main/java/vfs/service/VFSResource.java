@@ -2,9 +2,10 @@ package vfs.service;
 
 
 import com.codahale.metrics.annotation.Timed;
+import data.VelocityStatsList;
 import vfs.TransactionData;
 import vfs.VFSManager;
-import vfs.VelocityStatsList;
+
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;

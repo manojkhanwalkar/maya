@@ -1,5 +1,8 @@
 package vfs;
 
+import data.VelocityStats;
+import data.VelocityStatsList;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;

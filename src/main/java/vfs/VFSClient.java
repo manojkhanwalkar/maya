@@ -1,5 +1,6 @@
 package vfs;
 
+import data.VelocityStatsList;
 import util.Connection;
 import util.JSONUtil;
 
@@ -7,7 +8,7 @@ import java.util.Date;
 
 public class VFSClient {
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
 
         CCVIPValues.init("ccv","ip");
 
@@ -29,10 +30,10 @@ public class VFSClient {
 
         }
 
-    }
+    }*/
 
 
-    private static VelocityStatsList submit(TransactionData transactionData)
+    public static VelocityStatsList submit(TransactionData transactionData)
     {
         // send to scheduler a jar file and client name and get back a job id .
 

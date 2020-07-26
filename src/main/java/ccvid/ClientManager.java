@@ -3,7 +3,10 @@ package ccvid;
 import com.nimbusds.jose.JWEObject;
 import data.*;
 import util.JSONUtil;
+import vfs.TransactionData;
+import vfs.VFSClient;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class ClientManager {
@@ -33,6 +36,10 @@ public class ClientManager {
 
             responseHeader.setMessage("Processed request successfully");
 
+            VelocityStatsList velocityStatsList = getVelocityStats(request.getAttributes().getCardNumber());
+
+            response.setVelocityStatsList(velocityStatsList);
+
             //TODO - send to PM and VFS and get a response from them .
 
             response.setResponseHeader(responseHeader);
@@ -50,5 +57,22 @@ public class ClientManager {
 
 
         return null ;
+    }
+
+
+    private static VelocityStatsList getVelocityStats(String cardNumber)
+    {
+        TransactionData transactionData = new TransactionData();
+
+
+        transactionData.put("ccv",cardNumber);
+
+        transactionData.setDate(new Date());
+
+
+        VelocityStatsList velocityStats = VFSClient.submit(transactionData);
+
+        return  velocityStats;
+
     }
 }
