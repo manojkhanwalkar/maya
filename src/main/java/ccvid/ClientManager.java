@@ -2,6 +2,7 @@ package ccvid;
 
 import com.nimbusds.jose.JWEObject;
 import data.*;
+import pm.PMClient;
 import util.JSONUtil;
 import vfs.TransactionData;
 import vfs.VFSClient;
@@ -40,8 +41,9 @@ public class ClientManager {
 
             response.setVelocityStatsList(velocityStatsList);
 
-            //TODO - send to PM and VFS and get a response from them .
 
+            PMResponse pmResponse = PMClient.submit(request.getAttributes());
+            response.setScore(pmResponse.getScore());
             response.setResponseHeader(responseHeader);
 
             return clientHandler.wrap(JSONUtil.toJSON(response));
