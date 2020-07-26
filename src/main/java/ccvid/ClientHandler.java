@@ -4,9 +4,9 @@ package ccvid;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import data.EncryptedSignedResponse;
+import data.Header;
 import data.Request;
-import mynimbus.Header;
-import mynimbus.Sender;
+
 import util.JSONUtil;
 import util.JWUtil;
 

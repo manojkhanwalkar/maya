@@ -1,4 +1,4 @@
-package mynimbus;
+package data;
 
 public final class Header {
 

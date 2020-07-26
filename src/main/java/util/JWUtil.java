@@ -9,7 +9,7 @@ import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
-import mynimbus.Header;
+import data.Header;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
