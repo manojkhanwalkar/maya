@@ -10,6 +10,8 @@ public class RequestBuilder {
     {
         requestHeader.setRequestId(id);
 
+        request.setRequestHeader(requestHeader);
+
         return this;
     }
 

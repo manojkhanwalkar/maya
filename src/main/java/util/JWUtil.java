@@ -16,6 +16,7 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,51 +50,62 @@ public class JWUtil {
     }
 
 
-    public static String encrypt(List<Header> headers , JWK encrypterKey, String payload) throws Exception
+    public static String encrypt(List<Header> headers , JWK encrypterKey, String payload)
     {
 
-        var jweHeader = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES,
-                EncryptionMethod.A256GCM).keyID(encrypterKey.getKeyID())
-                .build();
+        try {
+            var jweHeader = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES,
+                    EncryptionMethod.A256GCM).keyID(encrypterKey.getKeyID())
+                    .build();
 
-        var jweObject = new JWEObject(jweHeader, new Payload(payload));
+            var jweObject = new JWEObject(jweHeader, new Payload(payload));
 
-        System.out.println("JWE header: " + jweHeader.toJSONObject());
-        jweObject.encrypt(new ECDHEncrypter(encrypterKey.toECKey()));
+            System.out.println("JWE header: " + jweHeader.toJSONObject());
+            jweObject.encrypt(new ECDHEncrypter(encrypterKey.toECKey()));
 
 
-        return jweObject.serialize();
+            return jweObject.serialize();
 
 //TODO - U / V info to be set from headers
 
 
- //           headers.stream().forEach(header-> jwe.setHeader(header.getName(),header.getValue()));
+            //           headers.stream().forEach(header-> jwe.setHeader(header.getName(),header.getValue()));
+        } catch (JOSEException e) {
+            e.printStackTrace();
 
+            return null;
+        }
 
 
     }
 
 
-    public static String decrypt(Map<String,JWK> keyMap,  String payload) throws Exception
+    public static String decrypt(Map<String,JWK> keyMap,  String payload)
     {
 
 
-        var jweObject = JWEObject.parse(payload);
+        try {
+            var jweObject = JWEObject.parse(payload);
 
-        String keyId = jweObject.getHeader().getKeyID();
+            String keyId = jweObject.getHeader().getKeyID();
 
-        JWK decrypterKey = keyMap.get(keyId);
+            JWK decrypterKey = keyMap.get(keyId);
 
-        //TODO - set and process expiry time
-
-
-        jweObject
-                .decrypt(new ECDHDecrypter((ECPrivateKey) decrypterKey.toECKey().toPrivateKey()));
-        var decryptedJWE = jweObject.getPayload().toString();
-
-        return decryptedJWE;
+            //TODO - set and process expiry time
 
 
+            jweObject
+                    .decrypt(new ECDHDecrypter((ECPrivateKey) decrypterKey.toECKey().toPrivateKey()));
+            var decryptedJWE = jweObject.getPayload().toString();
+
+            return decryptedJWE;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (JOSEException e) {
+            e.printStackTrace();
+        }
+
+        return null;
 
     }
 
@@ -107,10 +119,16 @@ public class JWUtil {
 
 
 
-    public static String sign(JWK jwk , String payload) throws JOSEException {
+    public static String sign(JWK jwk , String payload)  {
 
 
-        return sign(jwk.toECKey().toPrivateKey(),payload, jwk.getKeyID());
+        try {
+            return sign(jwk.toECKey().toPrivateKey(),payload, jwk.getKeyID());
+        } catch (JOSEException e) {
+            e.printStackTrace();
+
+            return null;
+        }
     }
 
 
@@ -133,20 +151,26 @@ public class JWUtil {
 
 
 
-    public static Optional<String> verify(Map<String, JWK> keys , String compactSerialization) throws Exception
+    public static Optional<String> verify(Map<String, JWK> keys , String compactSerialization)
     {
 
-        var jwsObject = JWSObject.parse(compactSerialization);
+        try {
+            var jwsObject = JWSObject.parse(compactSerialization);
 
-        String keyId = jwsObject.getHeader().getKeyID();
+            String keyId = jwsObject.getHeader().getKeyID();
 
-        JWK publicKey  = keys.get(keyId);
+            JWK publicKey  = keys.get(keyId);
 
-        var verifier = new ECDSAVerifier(publicKey.toECKey());
+            var verifier = new ECDSAVerifier(publicKey.toECKey());
 
-        if (jwsObject.verify(verifier)) {
-            System.out.println("Receiver successfully verified signature");
-            return Optional.of(jwsObject.getPayload().toString());
+            if (jwsObject.verify(verifier)) {
+                System.out.println("Receiver successfully verified signature");
+                return Optional.of(jwsObject.getPayload().toString());
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (JOSEException e) {
+            e.printStackTrace();
         }
 
         return Optional.empty();

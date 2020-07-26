@@ -68,24 +68,12 @@ ClientCache clientCache = new ClientCache();
     @Timed
     @Path("/verify")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response verify(EncryptedSignedRequest request) {
-
-        try {
-            String payload = request.getEncryptedSignedPayload();
-
-            var jweObject = JWEObject.parse(payload);
-
-            String keyId = jweObject.getHeader().getKeyID();
-
-            ClientHandler clientHandler = clientCache.get(keyId).orElseThrow();
-
-            clientHandler.recvMessageFromSender(payload);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public EncryptedSignedResponse verify(EncryptedSignedRequest encryptedSignedRequest) {
 
 
-        return new Response();
+        return ClientManager.process(encryptedSignedRequest,clientCache);
+
+
     }
 
 

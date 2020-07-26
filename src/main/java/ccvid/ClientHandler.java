@@ -3,8 +3,11 @@ package ccvid;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
+import data.EncryptedSignedResponse;
+import data.Request;
 import mynimbus.Header;
 import mynimbus.Sender;
+import util.JSONUtil;
 import util.JWUtil;
 
 import java.text.ParseException;
@@ -78,14 +81,34 @@ public class ClientHandler {
         createKeys();
     }
 
-    public void recvMessageFromSender(String message) throws Exception
+    public Request unwrap(String message) throws Exception
     {
 
-        System.out.println(verify(signSenderKeys,decrypt(kaPrivKReceiverMap,message)).orElseThrow());
+        String payload = verify(signSenderKeys,decrypt(kaPrivKReceiverMap,message)).orElseThrow();
 
-       // sendMessageToSender("Received message ");
+        Request request  = (Request)JSONUtil.fromJSON(payload,Request.class);
 
-       // alternate(message);
+        return request;
+
+
+
+    }
+
+    public EncryptedSignedResponse wrap(String message)
+    {
+        JWK kaPubKSender = kaSenderKeys.values().stream().findAny().get();
+
+        JWK signPrivKReceiver = signPrivKReceiverMap.values().stream().findAny().get();
+
+        List<Header> headers = List.of();
+
+        String str = encrypt(headers , kaPubKSender,sign(signPrivKReceiver,message));
+
+        EncryptedSignedResponse encryptedSignedResponse = new EncryptedSignedResponse();
+
+        encryptedSignedResponse.setEncryptedSignedPayload(str);
+
+        return encryptedSignedResponse;
 
     }
 
@@ -93,9 +116,6 @@ public class ClientHandler {
   /*  public void sendMessageToSender(String payload) throws Exception
     {
 
-        JWK kaPubKSender = kaSenderKeys.values().stream().findAny().get();
-
-        JWK signPrivKReceiver = signPrivKReceiverMap.values().stream().findAny().get();
 
         //   jwe.setHeader(HeaderParameterNames.AGREEMENT_PARTY_U_INFO, UUID.randomUUID().toString());
         //        jwe.setHeader(HeaderParameterNames.AGREEMENT_PARTY_V_INFO, UUID.randomUUID().toString());

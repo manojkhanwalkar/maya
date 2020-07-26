@@ -4,9 +4,7 @@ package client;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
-import data.EncryptedSignedRequest;
-import data.KeyExchange;
-import data.Request;
+import data.*;
 import mynimbus.ClientHandler;
 import mynimbus.Header;
 import util.Connection;
@@ -107,7 +105,7 @@ public class Sender {
     }
 
 
-    private  void  VerifyRequest(EncryptedSignedRequest request)
+    private  Response   VerifyRequest(EncryptedSignedRequest request)
     {
         // send to scheduler a jar file and client name and get back a job id .
 
@@ -115,7 +113,10 @@ public class Sender {
 
         String result = app.sendSimple(JSONUtil.toJSON(request),"verify");
 
-        System.out.println(result);
+        EncryptedSignedResponse encryptedSignedResponse = (EncryptedSignedResponse) JSONUtil.fromJSON(result,EncryptedSignedResponse.class);
+
+        return UnwrapResponse(encryptedSignedResponse.getEncryptedSignedPayload());
+
 
    //     KeyExchange keyExchange = (KeyExchange) JSONUtil.fromJSON(result,KeyExchange.class);
 
@@ -162,7 +163,7 @@ public class Sender {
     }
 
 
-    public void recvMessageFromReceover(String message) throws Exception
+    public Response  UnwrapResponse(String message)
     {
         String decryptedMsg = decrypt(kaPrivKSenderMap,message);
 
@@ -174,6 +175,10 @@ public class Sender {
 
 
         System.out.println(payload);
+
+        Response response = (Response) JSONUtil.fromJSON(payload, Response.class);
+
+        return response;
 
     }
 
