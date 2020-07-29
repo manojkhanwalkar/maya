@@ -126,7 +126,7 @@ public class ClientHandler {
 
        List<Header> headers = List.of();
 
-        String str = encrypt(headers , kaPubKSender,sign(signPrivKReceiver,payload));
+        String str = FPEencrypt(headers , kaPubKSender,sign(signPrivKReceiver,payload));
 
         sender.recvMessageFromReceover(str);
 
