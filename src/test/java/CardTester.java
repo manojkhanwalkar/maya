@@ -1,9 +1,12 @@
 import util.CardTuple;
 import util.CardUtil;
+import util.FPECardTuple;
+import util.HashCardTuple;
 
 import java.security.SecureRandom;
 
 import static util.CardUtil.*;
+import static util.CardUtil.SHA3HashWithSalt;
 
 public class CardTester {
 
@@ -23,7 +26,7 @@ public class CardTester {
         String str = CardUtil.createVCard();
 
 
-        CardTuple cardTuple = FPEencrypt1(str);
+        FPECardTuple cardTuple = FPEencrypt1(str);
 
         String newText = FPEdecrypt1(cardTuple);
 
@@ -32,6 +35,11 @@ public class CardTester {
 
         System.out.println("Card is valid " + CardUtil.validateCard(newText)) ;
 
+        HashCardTuple hashCardTuple = SHA3HashWithSalt(str);
+
+        var result = ValidateSHA3HashWithSalt(str,hashCardTuple);
+
+        System.out.println(result);
 
 
 

@@ -6,6 +6,17 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.google.common.hash.Hashing;
+import org.apache.commons.codec.digest.DigestUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
+import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA3_256;
+import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA3_512;
+
+
+
 public class CardUtil {
 
     static ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
@@ -134,7 +145,7 @@ public class CardUtil {
 
     static       SecureRandom secureRandom = new SecureRandom();
 
-    public static CardTuple FPEencrypt1(String pan)
+    public static FPECardTuple FPEencrypt1(String pan)
     {
 
 
@@ -163,7 +174,7 @@ public class CardUtil {
 
 
 
-            CardTuple cardTuple = new CardTuple();
+            FPECardTuple cardTuple = new FPECardTuple();
             cardTuple.setEncryptedText(enText+pan.substring(pan.length()-4));
             cardTuple.setKey(Base64.getEncoder().encodeToString(key));
             cardTuple.setTweak(Base64.getEncoder().encodeToString(tweak));
@@ -177,7 +188,7 @@ public class CardUtil {
     }
 
 
-    public static String FPEdecrypt1(CardTuple cardTuple)
+    public static String FPEdecrypt1(FPECardTuple cardTuple)
     {
 
         String fpeToken = cardTuple.getEncryptedText();
@@ -187,6 +198,45 @@ public class CardUtil {
         String str = fpeToken.substring(0,fpeToken.length()-4);
         return FPE.decrypt(str,key,tweak)+fpeToken.substring(fpeToken.length()-4);
     }
+
+    public static boolean ValidateSHA3HashWithSalt(String payload, HashCardTuple hashCardTuple)
+    {
+        byte[] salt = Base64.getDecoder().decode(hashCardTuple.getSalt());
+
+        var utils = new DigestUtils(SHA3_512);
+
+        utils.getMessageDigest().update(salt);
+
+        var sha3_512hex = utils.digestAsHex(payload);
+
+        return sha3_512hex.equals(hashCardTuple.getEncryptedText());
+    }
+
+    public static HashCardTuple SHA3HashWithSalt(String payload)
+    {
+
+        byte[] salt = new byte[64];
+
+        secureRandom.nextBytes(salt);
+
+        var utils = new DigestUtils(SHA3_512);
+
+        utils.getMessageDigest().update(salt);
+
+        var sha3_512hex = utils.digestAsHex(payload);
+
+
+        HashCardTuple hashCardTuple = new HashCardTuple();
+
+        hashCardTuple.setEncryptedText(sha3_512hex);
+
+        hashCardTuple.setSalt(Base64.getEncoder().encodeToString(salt));
+
+        return hashCardTuple;
+
+
+    }
+
 
 
 
