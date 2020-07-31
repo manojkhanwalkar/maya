@@ -81,20 +81,19 @@ public class ClientHandler {
         createKeys();
     }
 
-    public CCVIdRequest unwrap(String message) throws Exception
+    public String unwrap(String message) throws Exception
     {
 
         String payload = verify(signSenderKeys,decrypt(kaPrivKReceiverMap,message)).orElseThrow();
 
-        CCVIdRequest request  = (CCVIdRequest)JSONUtil.fromJSON(payload, CCVIdRequest.class);
 
-        return request;
+        return payload;
 
 
 
     }
 
-    public EncryptedSignedResponse wrap(String message)
+    public String wrap(String message)
     {
         JWK kaPubKSender = kaSenderKeys.values().stream().findAny().get();
 
@@ -104,11 +103,8 @@ public class ClientHandler {
 
         String str = encrypt(headers , kaPubKSender,sign(signPrivKReceiver,message));
 
-        EncryptedSignedResponse encryptedSignedResponse = new EncryptedSignedResponse();
 
-        encryptedSignedResponse.setEncryptedSignedPayload(str);
-
-        return encryptedSignedResponse;
+        return str;
 
     }
 

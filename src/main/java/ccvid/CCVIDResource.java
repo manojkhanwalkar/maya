@@ -5,6 +5,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
+import common.Processor;
 import data.*;
 
 import javax.ws.rs.POST;
@@ -63,6 +64,7 @@ ClientCache clientCache = new ClientCache();
     }
 
 
+    Processor<String,String> processor = new CCVIDRequestProcessor();
 
     @POST
     @Timed
@@ -71,7 +73,7 @@ ClientCache clientCache = new ClientCache();
     public EncryptedSignedResponse verify(EncryptedSignedRequest encryptedSignedRequest) {
 
 
-        return ClientManager.process(encryptedSignedRequest,clientCache);
+        return ClientManager.process(encryptedSignedRequest,clientCache,processor);
 
 
     }

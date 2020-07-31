@@ -1,6 +1,7 @@
 package ccvid;
 
 import com.nimbusds.jose.JWEObject;
+import common.Processor;
 import data.*;
 import pm.PMClient;
 import util.JSONUtil;
@@ -14,11 +15,9 @@ public class ClientManager {
 
     public enum status { Success, Error}
 
-    public static EncryptedSignedResponse process(EncryptedSignedRequest encryptedSignedRequest, ClientCache clientCache)
+    public static EncryptedSignedResponse process(EncryptedSignedRequest encryptedSignedRequest, ClientCache clientCache, Processor<String,String> processor)
     {
-        CCVIdResponse response = new CCVIdResponse();
-        ResponseHeader responseHeader = new ResponseHeader();
-        responseHeader.setResponseId(UUID.randomUUID().toString());
+
 
         try {
             String payload = encryptedSignedRequest.getEncryptedSignedPayload();
@@ -29,24 +28,16 @@ public class ClientManager {
 
             ClientHandler clientHandler = clientCache.get(keyId).orElseThrow();
 
-            CCVIdRequest request = clientHandler.unwrap(payload);
+            String payloadUnwrapped = clientHandler.unwrap(payload);
 
-            responseHeader.setRequestId(request.getRequestHeader().getRequestId());
+            String processedResponse = processor.process(payloadUnwrapped);
 
-            responseHeader.setStatus(status.Success.toString());
+            EncryptedSignedResponse encryptedSignedResponse = new EncryptedSignedResponse();
 
-            responseHeader.setMessage("Processed request successfully");
-
-            VelocityStatsList velocityStatsList = getVelocityStats(request.getAttributes().getCardNumber());
-
-            response.setVelocityStatsList(velocityStatsList);
+            encryptedSignedResponse.setEncryptedSignedPayload(clientHandler.wrap(processedResponse));
 
 
-            PMResponse pmResponse = PMClient.submit(request.getAttributes());
-            response.setScore(pmResponse.getScore());
-            response.setResponseHeader(responseHeader);
-
-            return clientHandler.wrap(JSONUtil.toJSON(response));
+            return encryptedSignedResponse;
 
 
           //  System.out.println(request);
@@ -62,19 +53,5 @@ public class ClientManager {
     }
 
 
-    private static VelocityStatsList getVelocityStats(String cardNumber)
-    {
-        TransactionData transactionData = new TransactionData();
 
-
-        transactionData.put("ccv",cardNumber);
-
-        transactionData.setDate(new Date());
-
-
-        VelocityStatsList velocityStats = VFSClient.submit(transactionData);
-
-        return  velocityStats;
-
-    }
 }
