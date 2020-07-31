@@ -8,7 +8,10 @@ import data.PMResponse;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -38,13 +41,35 @@ Random random = new Random() ;
     @Path("/verify")
     @Produces(MediaType.APPLICATION_JSON)
     public PMResponse verify(PMRequest request) {
+
+
          PMResponse response =  new PMResponse();
          response.setScore(String.valueOf(random.nextInt(100)));
 
          return response;
+
+      // return Optional.empty();
     }
 
 
+
+
+
+    @POST
+    @Timed
+    @Path("/verify1")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response verify1(PMRequest request) {
+
+        PMResponse response =  new PMResponse();
+        response.setScore(String.valueOf(random.nextInt(100)));
+
+        return Response.ok(response).build();
+
+       //return CCVIdResponse.status(CCVIdResponse.Status.BAD_GATEWAY).build();
+
+     //  throw new WebApplicationException(404);
+    }
 
 
 

@@ -34,7 +34,7 @@ public class JSONUtil {
         try {
             return mapper.readValue(json,clazz);
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
         return null;

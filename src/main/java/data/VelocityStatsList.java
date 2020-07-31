@@ -25,4 +25,11 @@ public class VelocityStatsList {
                 "stats=" + stats +
                 '}';
     }
+
+    static VelocityStatsList EMPTY = new VelocityStatsList();
+
+    public static VelocityStatsList getEMPTY()
+    {
+        return EMPTY;
+    }
 }

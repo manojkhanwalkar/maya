@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import data.*;
 import data.Header;
+import software.amazon.awssdk.services.devicefarm.model.Run;
 import util.Connection;
 import util.JSONUtil;
 import util.JWUtil;
@@ -93,33 +94,44 @@ public class Sender {
 
         System.out.println("Sending keys" + request.getJavawebKeySet());
 
-        String result = app.sendSimple(JSONUtil.toJSON(request),"keyexchange");
+        Optional<String> result = app.sendSimple(JSONUtil.toJSON(request),"keyexchange");
 
-        KeyExchange keyExchange = (KeyExchange) JSONUtil.fromJSON(result,KeyExchange.class);
+        if (result.isPresent()) {
 
-        System.out.println("Received keys " + request.getJavawebKeySet());
+            KeyExchange keyExchange = (KeyExchange) JSONUtil.fromJSON(result.get(), KeyExchange.class);
 
-        return  keyExchange;
+            System.out.println("Received keys " + request.getJavawebKeySet());
+
+            return keyExchange;
+        }
+        else
+        {
+            throw new RuntimeException("Key exchange failed");
+        }
 
     }
 
 
-    private  Response   VerifyRequest(EncryptedSignedRequest request)
+    private CCVIdResponse VerifyRequest(EncryptedSignedRequest request)
     {
         // send to scheduler a jar file and client name and get back a job id .
 
         Connection app = new Connection("https://localhost:8180/");
 
-        String result = app.sendSimple(JSONUtil.toJSON(request),"verify");
+        Optional<String> result = app.sendSimple(JSONUtil.toJSON(request),"verify");
 
-        EncryptedSignedResponse encryptedSignedResponse = (EncryptedSignedResponse) JSONUtil.fromJSON(result,EncryptedSignedResponse.class);
+        if (result.isPresent()) {
 
-        return UnwrapResponse(encryptedSignedResponse.getEncryptedSignedPayload());
+            EncryptedSignedResponse encryptedSignedResponse = (EncryptedSignedResponse) JSONUtil.fromJSON(result.get(), EncryptedSignedResponse.class);
 
+            return UnwrapResponse(encryptedSignedResponse.getEncryptedSignedPayload());
 
-   //     KeyExchange keyExchange = (KeyExchange) JSONUtil.fromJSON(result,KeyExchange.class);
+        }
+        else
+        {
+            throw new RuntimeException("Error in Verifying ");
+        }
 
-//        return  keyExchange;
 
     }
 
@@ -127,7 +139,7 @@ public class Sender {
 
 
 
-    public void sendMessagetoCCVId(Request request) throws Exception
+    public void sendMessagetoCCVId(CCVIdRequest request) throws Exception
     {
         Random random = new Random();
 
@@ -162,7 +174,7 @@ public class Sender {
     }
 
 
-    public Response  UnwrapResponse(String message)
+    public CCVIdResponse UnwrapResponse(String message)
     {
         String decryptedMsg = decrypt(kaPrivKSenderMap,message);
 
@@ -175,7 +187,7 @@ public class Sender {
 
         System.out.println(payload);
 
-        Response response = (Response) JSONUtil.fromJSON(payload, Response.class);
+        CCVIdResponse response = (CCVIdResponse) JSONUtil.fromJSON(payload, CCVIdResponse.class);
 
         return response;
 

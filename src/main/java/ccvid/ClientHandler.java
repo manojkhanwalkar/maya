@@ -5,7 +5,7 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import data.EncryptedSignedResponse;
 import data.Header;
-import data.Request;
+import data.CCVIdRequest;
 
 import util.JSONUtil;
 import util.JWUtil;
@@ -81,12 +81,12 @@ public class ClientHandler {
         createKeys();
     }
 
-    public Request unwrap(String message) throws Exception
+    public CCVIdRequest unwrap(String message) throws Exception
     {
 
         String payload = verify(signSenderKeys,decrypt(kaPrivKReceiverMap,message)).orElseThrow();
 
-        Request request  = (Request)JSONUtil.fromJSON(payload,Request.class);
+        CCVIdRequest request  = (CCVIdRequest)JSONUtil.fromJSON(payload, CCVIdRequest.class);
 
         return request;
 

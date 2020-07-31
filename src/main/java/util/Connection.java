@@ -1,11 +1,13 @@
 package util;
 
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.Properties;
 
 public class Connection {
@@ -34,38 +36,44 @@ public class Connection {
 
 
 
-    public String sendSimple(String request,String action)
+    public Optional<String> sendSimple(String request,String action)
     {
-        try {
-            return post(request,action);
-        } catch (Exception e) {
-          //  e.printStackTrace();
 
-            return null;
-        }
+            return post(request,action);
+
     }
 
 
 
 
-    private String post(String str , String url) throws Exception
+    private Optional<String> post(String str , String url) //throws Exception
     {
 
-        HttpRequest httprequest = HttpRequest.newBuilder()
-                .uri(URI.create(target + url))
-                .header("Content-Type", "application/json")
-               //  .header("HMAC" , HMACUtil.calculateHMAC(str,HmacKey))
-                .POST(HttpRequest.BodyPublishers.ofString(str))
-                .timeout(Duration.ofMinutes(1))
-                .build();
+        try {
+            HttpRequest httprequest = HttpRequest.newBuilder()
+                    .uri(URI.create(target + url))
+                    .header("Content-Type", "application/json")
+                   //  .header("HMAC" , HMACUtil.calculateHMAC(str,HmacKey))
+                    .POST(HttpRequest.BodyPublishers.ofString(str))
+                    .timeout(Duration.ofMinutes(1))
+                    .build();
 
 
-        HttpResponse<String> response =
-                client.send(httprequest, HttpResponse.BodyHandlers.ofString());
-
-        return response.body();
+            HttpResponse<String> response =
+                    client.send(httprequest, HttpResponse.BodyHandlers.ofString());
 
 
+           if (response.statusCode()==200)
+               return Optional.of(response.body());
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
     }
 
 

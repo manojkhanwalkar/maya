@@ -1,12 +1,11 @@
 package pm;
 
-import data.Attributes;
-import data.PMRequest;
-import data.PMResponse;
-import data.VelocityStatsList;
+import data.*;
 import util.Connection;
 import util.JSONUtil;
 import vfs.TransactionData;
+
+import java.util.Optional;
 
 public class PMClient {
 
@@ -24,11 +23,32 @@ public class PMClient {
         pmRequest.setAttributes(attributes);
         Connection app = new Connection("https://localhost:8280/");
 
-        String result = app.sendSimple(JSONUtil.toJSON(pmRequest),"verify");
+        Optional<String> result = app.sendSimple(JSONUtil.toJSON(pmRequest),"verify1");
 
-     //   System.out.println(result);
+       System.out.println(result);
 
-        return (PMResponse) JSONUtil.fromJSON(result,PMResponse.class);
+       if (result.isPresent())
+       {
+           return (PMResponse) JSONUtil.fromJSON(result.get(), PMResponse.class);
+       }
+      else
+       {
+           return PMResponse.getEMPTY();
+       }
+
+    }
+
+
+    public static void main(String[] args) {
+
+        AttributesBuilder attributesBuilder = new AttributesBuilder();
+
+        Attributes attributes = attributesBuilder.birthDate("1980-1-1").cardNumber("1588213088725991").email("ttt@ttt.com").familyName("Hawking").givenName("Elm")
+                .phoneNumber("+18002003456").residentAddress("Univ street").residentCity("Princeton").residentCountry("USA")
+                .residentPostalCode("08836").residentState("CA").build();
+        PMResponse pmResponse = PMClient.submit(attributes);
+
+        System.out.println(pmResponse);
 
     }
 

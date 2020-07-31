@@ -1,6 +1,6 @@
 package data;
 
-public class Response {
+public class CCVIdResponse {
 
     ResponseHeader responseHeader;
 

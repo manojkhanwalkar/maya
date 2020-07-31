@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "workflowId",
     "attributes"
 })
-public class Request {
+public class CCVIdRequest {
 
     /**
      * 

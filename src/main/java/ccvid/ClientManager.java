@@ -16,7 +16,7 @@ public class ClientManager {
 
     public static EncryptedSignedResponse process(EncryptedSignedRequest encryptedSignedRequest, ClientCache clientCache)
     {
-        Response response = new Response();
+        CCVIdResponse response = new CCVIdResponse();
         ResponseHeader responseHeader = new ResponseHeader();
         responseHeader.setResponseId(UUID.randomUUID().toString());
 
@@ -29,7 +29,7 @@ public class ClientManager {
 
             ClientHandler clientHandler = clientCache.get(keyId).orElseThrow();
 
-            Request request = clientHandler.unwrap(payload);
+            CCVIdRequest request = clientHandler.unwrap(payload);
 
             responseHeader.setRequestId(request.getRequestHeader().getRequestId());
 

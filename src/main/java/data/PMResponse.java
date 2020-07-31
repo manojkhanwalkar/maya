@@ -13,5 +13,12 @@ public class PMResponse {
         this.score = score;
     }
 
+    static PMResponse EMPTY = new PMResponse();
+
+    public static PMResponse getEMPTY()
+    {
+        return EMPTY;
+    }
+
 
 }

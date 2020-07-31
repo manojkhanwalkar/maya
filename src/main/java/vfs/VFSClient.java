@@ -5,6 +5,7 @@ import util.Connection;
 import util.JSONUtil;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class VFSClient {
 
@@ -41,11 +42,14 @@ public class VFSClient {
 
         Connection app = new Connection("https://localhost:8880/");
 
-        String result = app.sendSimple(JSONUtil.toJSON(transactionData),"transaction");
+        Optional<String> result = app.sendSimple(JSONUtil.toJSON(transactionData),"transaction");
 
         System.out.println(result);
 
-        return (VelocityStatsList) JSONUtil.fromJSON(result,VelocityStatsList.class);
+        if (result.isPresent())
+            return (VelocityStatsList) JSONUtil.fromJSON(result.get(),VelocityStatsList.class);
+        else
+            return VelocityStatsList.getEMPTY();
 
     }
 

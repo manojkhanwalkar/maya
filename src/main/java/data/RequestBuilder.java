@@ -4,7 +4,7 @@ public class RequestBuilder {
 
     RequestHeader requestHeader = new RequestHeader();
 
-    Request request = new Request();
+    CCVIdRequest request = new CCVIdRequest();
 
     public RequestBuilder header(String id)
     {
@@ -30,7 +30,7 @@ public class RequestBuilder {
         return this;
     }
 
-    public Request build()
+    public CCVIdRequest build()
     {
         return request;
     }
