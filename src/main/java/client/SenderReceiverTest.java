@@ -1,9 +1,9 @@
 package client;
 
 
-import data.Attributes;
-import data.AttributesBuilder;
-import data.RequestBuilder;
+import data.*;
+import util.JSONUtil;
+import util.Sender;
 
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ public class SenderReceiverTest {
     public static void main(String[] args) throws Exception  {
 
 
-        Sender sender = new Sender();
+        Sender sender = new Sender("https://localhost:8180/");
 
         sender.init();
 
@@ -28,12 +28,25 @@ public class SenderReceiverTest {
         requestBuilder.attributes(attributes).header(UUID.randomUUID().toString()).workflowId(UUID.randomUUID().toString());
 
 
-        sender.sendMessagetoCCVId(requestBuilder.build());
+
+
+        CCVIdRequest request = requestBuilder.build();
 
 
 
+        String payload = JSONUtil.toJSON(request);
+
+
+        String responseStr = sender.send(payload,"verify");
+
+        CCVIdResponse response = (CCVIdResponse) JSONUtil.fromJSON(responseStr, CCVIdResponse.class);
+
+        System.out.println(response);
 
 
 
     }
+
+
+
 }

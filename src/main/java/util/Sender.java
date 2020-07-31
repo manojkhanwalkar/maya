@@ -1,4 +1,4 @@
-package client;
+package util;
 
 
 
@@ -12,6 +12,7 @@ import util.JSONUtil;
 import util.JWUtil;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static util.JWUtil.*;
@@ -56,11 +57,11 @@ public class Sender {
     }
 
 
+   String url;
 
-
-    public Sender()
+    public Sender(String url)
     {
-
+        this.url = url;
 
         createKeys();
 
@@ -90,7 +91,7 @@ public class Sender {
     {
         // send to scheduler a jar file and client name and get back a job id .
 
-        Connection app = new Connection("https://localhost:8180/");
+        Connection app = new Connection(url);
 
         System.out.println("Sending keys" + request.getJavawebKeySet());
 
@@ -112,13 +113,15 @@ public class Sender {
     }
 
 
-    private CCVIdResponse VerifyRequest(EncryptedSignedRequest request)
+    private String send(EncryptedSignedRequest request, String action)
     {
         // send to scheduler a jar file and client name and get back a job id .
 
-        Connection app = new Connection("https://localhost:8180/");
+     //   Connection app = new Connection("https://localhost:8180/");
 
-        Optional<String> result = app.sendSimple(JSONUtil.toJSON(request),"verify");
+        Connection app = new Connection(url);
+
+        Optional<String> result = app.sendSimple(JSONUtil.toJSON(request),action);
 
         if (result.isPresent()) {
 
@@ -136,14 +139,10 @@ public class Sender {
     }
 
 
+    ThreadLocalRandom random = ThreadLocalRandom.current();
 
-
-
-    public void sendMessagetoCCVId(CCVIdRequest request) throws Exception
+    public String send(String payload, String action)
     {
-        Random random = new Random();
-
-        String payload = JSONUtil.toJSON(request);
 
         EncryptedSignedRequest esRequest = new EncryptedSignedRequest();
 
@@ -159,22 +158,21 @@ public class Sender {
 
         //        jwe.setHeader(HeaderParameterNames.AGREEMENT_PARTY_V_INFO, UUID.randomUUID().toString());
 
-      //  Header header = new Header(HeaderParameterNames.AGREEMENT_PARTY_U_INFO, UUID.randomUUID().toString());
+        //  Header header = new Header(HeaderParameterNames.AGREEMENT_PARTY_U_INFO, UUID.randomUUID().toString());
         List<Header> headers = List.of();
 
         String str = encrypt(headers , kaPubKReceiver,sign(signPrivKSender,payload));
 
         esRequest.setEncryptedSignedPayload(str);
 
-        VerifyRequest(esRequest);
+        return send(esRequest,action);
 
-        //TODO - process the incoming reqponse .
-
-       // clientHandler.recvMessageFromSender(str);
     }
 
 
-    public CCVIdResponse UnwrapResponse(String message)
+
+
+    public String UnwrapResponse(String message)
     {
         String decryptedMsg = decrypt(kaPrivKSenderMap,message);
 
@@ -187,9 +185,11 @@ public class Sender {
 
         System.out.println(payload);
 
-        CCVIdResponse response = (CCVIdResponse) JSONUtil.fromJSON(payload, CCVIdResponse.class);
+        //CCVIdResponse response = (CCVIdResponse) JSONUtil.fromJSON(payload, CCVIdResponse.class);
 
-        return response;
+        //return response;
+
+        return payload;
 
     }
 

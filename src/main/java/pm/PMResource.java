@@ -59,12 +59,14 @@ Random random = new Random() ;
     @Timed
     @Path("/verify1")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response verify1(PMRequest request) {
-
+ //   public Response verify1(PMRequest request) {
+  public Optional<PMResponse> verify1(PMRequest request) {
         PMResponse response =  new PMResponse();
         response.setScore(String.valueOf(random.nextInt(100)));
 
-        return Response.ok(response).build();
+        return Optional.of(response);
+
+       // return Response.serverError().build();
 
        //return CCVIdResponse.status(CCVIdResponse.Status.BAD_GATEWAY).build();
 

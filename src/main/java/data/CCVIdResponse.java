@@ -31,4 +31,13 @@ public class CCVIdResponse {
     public void setScore(String score) {
         this.score = score;
     }
+
+    @Override
+    public String toString() {
+        return "CCVIdResponse{" +
+                "responseHeader=" + responseHeader +
+                ", velocityStatsList=" + velocityStatsList +
+                ", score='" + score + '\'' +
+                '}';
+    }
 }

@@ -63,6 +63,8 @@ public class Connection {
                     client.send(httprequest, HttpResponse.BodyHandlers.ofString());
 
 
+            System.out.println(response);
+
            if (response.statusCode()==200)
                return Optional.of(response.body());
 
