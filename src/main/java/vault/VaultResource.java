@@ -51,7 +51,8 @@ ClientCache clientCache = new ClientCache();
     }
 
 
-    Processor<String,String> processor = new VaultRequestProcessor();
+    Processor<String,String> putRequestProcessor = new VaultPutRequestProcessor();
+    Processor<String,String> getRequestProcessor = new VaultGetRequestProcessor();
 
     @POST
     @Timed
@@ -60,7 +61,8 @@ ClientCache clientCache = new ClientCache();
     public EncryptedSignedResponse tokenize(EncryptedSignedRequest encryptedSignedRequest) {
 
 
-        return ClientManager.process(encryptedSignedRequest,clientCache,processor);
+        System.out.println("Received request");
+        return ClientManager.process(encryptedSignedRequest,clientCache,putRequestProcessor);
 
 
     }
@@ -73,7 +75,7 @@ ClientCache clientCache = new ClientCache();
     public EncryptedSignedResponse cc(EncryptedSignedRequest encryptedSignedRequest) {
 
 
-        return ClientManager.process(encryptedSignedRequest,clientCache,processor);
+        return ClientManager.process(encryptedSignedRequest,clientCache,getRequestProcessor);
 
 
     }

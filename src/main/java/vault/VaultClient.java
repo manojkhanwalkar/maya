@@ -18,7 +18,7 @@ public class VaultClient {
 
         sender.init();
 
-        Token token;
+        Token token = null;
 
         {
             VaultPutRequest putRequest = new VaultPutRequest();

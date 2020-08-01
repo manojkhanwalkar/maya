@@ -31,4 +31,13 @@ public class VaultPutRequest {
     public void setMerchantId(String merchantId) {
         this.merchantId = merchantId;
     }
+
+    @Override
+    public String toString() {
+        return "VaultPutRequest{" +
+                "requestId='" + requestId + '\'' +
+                ", ccNumber='" + ccNumber + '\'' +
+                ", merchantId='" + merchantId + '\'' +
+                '}';
+    }
 }

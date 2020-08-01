@@ -7,7 +7,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 
-public class VaultApplication extends Application<CCVIDConfiguration> {
+public class VaultApplication extends Application<VaultConfiguration> {
     public static void main(String[] args) throws Exception {
         new VaultApplication().run(args);
     }
@@ -18,7 +18,7 @@ public class VaultApplication extends Application<CCVIDConfiguration> {
     }
 
     @Override
-    public void initialize(Bootstrap<CCVIDConfiguration> bootstrap) {
+    public void initialize(Bootstrap<VaultConfiguration> bootstrap) {
 
     //    IDStatusPollManager.getInstance().start();
 
@@ -26,9 +26,9 @@ public class VaultApplication extends Application<CCVIDConfiguration> {
     }
 
     @Override
-    public void run(CCVIDConfiguration configuration,
+    public void run(VaultConfiguration configuration,
                     Environment environment) {
-        final CCVIDResource resource = new CCVIDResource(
+        final VaultResource resource = new VaultResource(
                 configuration.getTemplate(),
                 configuration.getDefaultName()
         );
