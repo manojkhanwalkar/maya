@@ -55,9 +55,9 @@ ClientCache clientCache = new ClientCache();
 
     @POST
     @Timed
-    @Path("/verify")
+    @Path("/tokenize")
     @Produces(MediaType.APPLICATION_JSON)
-    public EncryptedSignedResponse verify(EncryptedSignedRequest encryptedSignedRequest) {
+    public EncryptedSignedResponse tokenize(EncryptedSignedRequest encryptedSignedRequest) {
 
 
         return ClientManager.process(encryptedSignedRequest,clientCache,processor);
@@ -66,7 +66,17 @@ ClientCache clientCache = new ClientCache();
     }
 
 
+    @POST
+    @Timed
+    @Path("/cc")
+    @Produces(MediaType.APPLICATION_JSON)
+    public EncryptedSignedResponse cc(EncryptedSignedRequest encryptedSignedRequest) {
 
+
+        return ClientManager.process(encryptedSignedRequest,clientCache,processor);
+
+
+    }
 
 
 

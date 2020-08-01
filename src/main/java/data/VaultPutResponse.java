@@ -30,4 +30,13 @@ public class VaultPutResponse {
     public void setToken(Token token) {
         this.token = token;
     }
+
+    @Override
+    public String toString() {
+        return "VaultPutResponse{" +
+                "responseId='" + responseId + '\'' +
+                ", requestId='" + requestId + '\'' +
+                ", token=" + token +
+                '}';
+    }
 }

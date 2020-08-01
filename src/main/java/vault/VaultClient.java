@@ -2,6 +2,7 @@ package vault;
 
 
 import data.*;
+import util.CardUtil;
 import util.JSONUtil;
 import util.Sender;
 
@@ -17,31 +18,48 @@ public class VaultClient {
 
         sender.init();
 
-       AttributesBuilder attributesBuilder = new AttributesBuilder();
+        Token token;
 
-        Attributes attributes = attributesBuilder.birthDate("1980-1-1").cardNumber("1588213088725991").email("ttt@ttt.com").familyName("Hawking").givenName("Elm")
-                .phoneNumber("+18002003456").residentAddress("Univ street").residentCity("Princeton").residentCountry("USA")
-                .residentPostalCode("08836").residentState("CA").build();
+        {
+            VaultPutRequest putRequest = new VaultPutRequest();
 
-        RequestBuilder requestBuilder = new RequestBuilder();
+            putRequest.setCcNumber(CardUtil.createVCard());
+            putRequest.setMerchantId("Merchant1");
+            putRequest.setRequestId(UUID.randomUUID().toString());
 
-        requestBuilder.attributes(attributes).header(UUID.randomUUID().toString()).workflowId(UUID.randomUUID().toString());
-
-
-
-
-        CCVIdRequest request = requestBuilder.build();
+            String payload = JSONUtil.toJSON(putRequest);
 
 
+            String responseStr = sender.send(payload, "tokenize");
 
-        String payload = JSONUtil.toJSON(request);
+            VaultPutResponse vaultPutResponse = (VaultPutResponse) JSONUtil.fromJSON(responseStr, VaultPutResponse.class);
+
+            token = vaultPutResponse.getToken();
+
+            System.out.println(vaultPutResponse);
+
+        }
+
+        {
+            VaultGetRequest getRequest = new VaultGetRequest();
+
+            getRequest.setMerchantId("Merchant1");
+            getRequest.setRequestId(UUID.randomUUID().toString());
+            getRequest.setToken(token);
 
 
-        String responseStr = sender.send(payload,"verify");
+            String payload = JSONUtil.toJSON(getRequest);
 
-        CCVIdResponse response = (CCVIdResponse) JSONUtil.fromJSON(responseStr, CCVIdResponse.class);
 
-        System.out.println(response);
+            String responseStr = sender.send(payload,"cc");
+
+            VaultGetResponse vaultGetResponse = (VaultGetResponse) JSONUtil.fromJSON(responseStr, VaultGetResponse.class);
+
+            System.out.println(vaultGetResponse);
+
+        }
+
+        //System.out.println(response);
 
 
 
