@@ -1,15 +1,8 @@
-package ccvid;
+package util;
 
 import com.nimbusds.jose.JWEObject;
 import common.Processor;
 import data.*;
-import pm.PMClient;
-import util.JSONUtil;
-import vfs.TransactionData;
-import vfs.VFSClient;
-
-import java.util.Date;
-import java.util.UUID;
 
 public class ClientManager {
 

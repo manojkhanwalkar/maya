@@ -1,16 +1,15 @@
 package ccvid;
 
-import com.nimbusds.jose.JWEObject;
 import common.Processor;
 import data.*;
 import pm.PMClient;
+import util.ClientManager;
 import util.JSONUtil;
 import vfs.TransactionData;
 import vfs.VFSClient;
 
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.Flow;
 
 public class CCVIDRequestProcessor implements Processor<String,String> {
 

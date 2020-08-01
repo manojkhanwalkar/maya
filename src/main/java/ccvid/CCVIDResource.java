@@ -2,18 +2,19 @@ package ccvid;
 
 
 import com.codahale.metrics.annotation.Timed;
-import com.nimbusds.jose.JWEObject;
-import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import common.Processor;
 import data.*;
+import util.ClientCache;
+import util.ClientHandler;
+import util.ClientManager;
+import util.KeyExchangeUtil;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.text.ParseException;
-import java.util.Random;
 
 
 @Path("/")
@@ -44,23 +45,8 @@ ClientCache clientCache = new ClientCache();
     public KeyExchange keyexchange(KeyExchange request) {
 
 
-        try {
-            ClientHandler clientHandler = new ClientHandler();
-            clientHandler.init(request.getJavawebKeySet());
+        return KeyExchangeUtil.keyExchange(request,clientCache);
 
-
-            KeyExchange response = new KeyExchange();
-            response.setJavawebKeySet(clientHandler.getKAandSignPubKeys());
-
-            clientCache.put(JWKSet.parse(request.getJavawebKeySet()),clientHandler);
-            clientCache.put(JWKSet.parse(response.getJavawebKeySet()),clientHandler);
-
-            return response;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
 

@@ -1,4 +1,4 @@
-package client;
+package ccvid;
 
 
 import data.*;
@@ -7,7 +7,7 @@ import util.Sender;
 
 import java.util.UUID;
 
-public class SenderReceiverTest {
+public class CCVIDClient {
 
 
     public static void main(String[] args) throws Exception  {
