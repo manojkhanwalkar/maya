@@ -178,6 +178,8 @@ public class CardUtil {
             cardTuple.setEncryptedText(enText+pan.substring(pan.length()-4));
             cardTuple.setKey(Base64.getEncoder().encodeToString(key));
             cardTuple.setTweak(Base64.getEncoder().encodeToString(tweak));
+
+
             return cardTuple;
 
                // FPE follows the required rules .

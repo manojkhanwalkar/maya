@@ -6,6 +6,7 @@ public class CardTuple {
     String encryptedText;
 
 
+
     public String getEncryptedText() {
         return encryptedText;
     }
