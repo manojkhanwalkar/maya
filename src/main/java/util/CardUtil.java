@@ -7,6 +7,7 @@ import java.util.Base64;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.common.hash.Hashing;
+import data.Token;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -131,14 +132,40 @@ public class CardUtil {
     }
 
 
-    public static String FPEencrypt(String pan, byte[] key , byte[] tweak)
+    public static FPECardTuple FPEencrypt(String pan )
     {
-        return FPE.encrypt(pan,key,tweak);
+        byte[] key = new byte[32];
+
+
+        byte[] tweak = new byte[10];
+
+        secureRandom.nextBytes(key);
+
+
+        secureRandom.nextBytes(tweak);
+
+
+
+        String enText =  FPE.encrypt(pan,key,tweak);
+
+        FPECardTuple cardTuple = new FPECardTuple();
+        cardTuple.setEncryptedText(enText);
+        cardTuple.setKey(Base64.getEncoder().encodeToString(key));
+        cardTuple.setTweak(Base64.getEncoder().encodeToString(tweak));
+        cardTuple.setType(Token.Type.FPE1);
+
+        return cardTuple;
+
+
     }
 
 
-    public static String FPEdecrypt(String fpeToken, byte[] key, byte[] tweak)
+    public static String FPEdecrypt(FPECardTuple cardTuple)
     {
+        String fpeToken = cardTuple.getEncryptedText();
+        byte[] key = Base64.getDecoder().decode(cardTuple.getKey());
+        byte[] tweak = Base64.getDecoder().decode(cardTuple.getTweak());
+
         return FPE.decrypt(fpeToken,key,tweak);
     }
 
@@ -178,6 +205,7 @@ public class CardUtil {
             cardTuple.setEncryptedText(enText+pan.substring(pan.length()-4));
             cardTuple.setKey(Base64.getEncoder().encodeToString(key));
             cardTuple.setTweak(Base64.getEncoder().encodeToString(tweak));
+            cardTuple.setType(Token.Type.FPE1);
 
 
             return cardTuple;
@@ -201,7 +229,7 @@ public class CardUtil {
         return FPE.decrypt(str,key,tweak)+fpeToken.substring(fpeToken.length()-4);
     }
 
-    public static boolean ValidateSHA3HashWithSalt(String payload, HashCardTuple hashCardTuple)
+    public static boolean ValidateSHA3HashWithSalt(HashCardTuple hashCardTuple)
     {
         byte[] salt = Base64.getDecoder().decode(hashCardTuple.getSalt());
 
@@ -209,7 +237,7 @@ public class CardUtil {
 
         utils.getMessageDigest().update(salt);
 
-        var sha3_512hex = utils.digestAsHex(payload);
+        var sha3_512hex = utils.digestAsHex(hashCardTuple.getPan());
 
         return sha3_512hex.equals(hashCardTuple.getEncryptedText());
     }
@@ -233,6 +261,8 @@ public class CardUtil {
         hashCardTuple.setEncryptedText(sha3_512hex);
 
         hashCardTuple.setSalt(Base64.getEncoder().encodeToString(salt));
+
+        hashCardTuple.setPan(payload);
 
         return hashCardTuple;
 

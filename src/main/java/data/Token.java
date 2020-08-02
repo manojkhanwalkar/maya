@@ -4,7 +4,7 @@ public class Token {
 
     String value;
 
-    public enum Type { FPE , FPE1 , Hash};
+    public enum Type { FPE , FPE1 , Hash , HashF6L4};
 
      Type type;
 
