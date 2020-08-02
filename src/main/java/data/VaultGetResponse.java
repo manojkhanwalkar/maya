@@ -31,4 +31,13 @@ public class VaultGetResponse {
     public void setCcNumber(String ccNumber) {
         this.ccNumber = ccNumber;
     }
+
+    @Override
+    public String toString() {
+        return "VaultGetResponse{" +
+                "responseId='" + responseId + '\'' +
+                ", requestId='" + requestId + '\'' +
+                ", ccNumber='" + ccNumber + '\'' +
+                '}';
+    }
 }

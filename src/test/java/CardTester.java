@@ -36,20 +36,20 @@ public class CardTester {
         Optional<Token> token =
                 tokenManager.put("Merchant1",str, Token.Type.FPE1);
 
-        System.out.println(str + "  " + tokenManager.get("Merchant1",token.get()));
+        System.out.println(str + "  " + token.get().getValue() + " " + tokenManager.get("Merchant1",token.get()));
 
         token =
                 tokenManager.put("Merchant1",str, Token.Type.FPE);
-        System.out.println(str + "  " + tokenManager.get("Merchant1",token.get()));
+        System.out.println(str + "  " + token.get().getValue() + " " + tokenManager.get("Merchant1",token.get()));
 
         token =
                 tokenManager.put("Merchant1",str, Token.Type.Hash);
-        System.out.println(str + "  " + tokenManager.get("Merchant1",token.get()));
+        System.out.println(str + "  " + token.get().getValue() + " " + tokenManager.get("Merchant1",token.get()));
 
-        token =
+      /*  token =
                 tokenManager.put("Merchant1",str, Token.Type.HashF6L4);
-        System.out.println(str + "  " + tokenManager.get("Merchant1",token.get()));
-
+        System.out.println(str + "  " + token.get().getValue() + " " + tokenManager.get("Merchant1",token.get()));
+*/
 
 
     }

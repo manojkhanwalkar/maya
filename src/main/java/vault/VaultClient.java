@@ -18,50 +18,57 @@ public class VaultClient {
 
         sender.init();
 
-        Token token = null;
+        Token.Type[] types = Token.Type.values();
 
-        {
-            VaultPutRequest putRequest = new VaultPutRequest();
+        String cardNum = CardUtil.createVCard();
 
-            putRequest.setCcNumber(CardUtil.createVCard());
-            putRequest.setMerchantId("Merchant1");
-            putRequest.setRequestId(UUID.randomUUID().toString());
+        for (int i=0;i<types.length;i++) {
+            Token token = null;
 
-            String payload = JSONUtil.toJSON(putRequest);
+            {
+                VaultPutRequest putRequest = new VaultPutRequest();
+
+                putRequest.setCcNumber(cardNum);
+                putRequest.setMerchantId("Merchant1");
+                putRequest.setRequestId(UUID.randomUUID().toString());
+
+                putRequest.setType(types[i]);
+
+                String payload = JSONUtil.toJSON(putRequest);
 
 
-            String responseStr = sender.send(payload, "tokenize");
+                String responseStr = sender.send(payload, "tokenize");
 
-            VaultPutResponse vaultPutResponse = (VaultPutResponse) JSONUtil.fromJSON(responseStr, VaultPutResponse.class);
+                VaultPutResponse vaultPutResponse = (VaultPutResponse) JSONUtil.fromJSON(responseStr, VaultPutResponse.class);
 
-            token = vaultPutResponse.getToken();
+                token = vaultPutResponse.getToken();
 
-            System.out.println(vaultPutResponse);
+                System.out.println(vaultPutResponse);
+
+            }
+
+            {
+                VaultGetRequest getRequest = new VaultGetRequest();
+
+                getRequest.setMerchantId("Merchant1");
+                getRequest.setRequestId(UUID.randomUUID().toString());
+                getRequest.setToken(token);
+
+
+                String payload = JSONUtil.toJSON(getRequest);
+
+
+                String responseStr = sender.send(payload, "cc");
+
+                VaultGetResponse vaultGetResponse = (VaultGetResponse) JSONUtil.fromJSON(responseStr, VaultGetResponse.class);
+
+                System.out.println(vaultGetResponse);
+
+            }
+
+            //System.out.println(response);
 
         }
-
-        {
-            VaultGetRequest getRequest = new VaultGetRequest();
-
-            getRequest.setMerchantId("Merchant1");
-            getRequest.setRequestId(UUID.randomUUID().toString());
-            getRequest.setToken(token);
-
-
-            String payload = JSONUtil.toJSON(getRequest);
-
-
-            String responseStr = sender.send(payload,"cc");
-
-            VaultGetResponse vaultGetResponse = (VaultGetResponse) JSONUtil.fromJSON(responseStr, VaultGetResponse.class);
-
-            System.out.println(vaultGetResponse);
-
-        }
-
-        //System.out.println(response);
-
-
 
     }
 

@@ -51,8 +51,13 @@ ClientCache clientCache = new ClientCache();
     }
 
 
-    Processor<String,String> putRequestProcessor = new VaultPutRequestProcessor();
-    Processor<String,String> getRequestProcessor = new VaultGetRequestProcessor();
+
+    TokenManager tokenManager = new TokenManager();
+
+    Processor<String,String> putRequestProcessor = new VaultPutRequestProcessor(tokenManager);
+    Processor<String,String> getRequestProcessor = new VaultGetRequestProcessor(tokenManager);
+
+
 
     @POST
     @Timed

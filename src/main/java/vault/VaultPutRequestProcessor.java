@@ -9,10 +9,17 @@ import vfs.TransactionData;
 import vfs.VFSClient;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 public class VaultPutRequestProcessor implements Processor<String,String> {
 
+
+    TokenManager tokenManager;
+
+    public VaultPutRequestProcessor(TokenManager tokenManager) {
+        this.tokenManager = tokenManager;
+    }
 
     @Override
     public String process(String payloadUnwrapped) {
@@ -24,9 +31,12 @@ public class VaultPutRequestProcessor implements Processor<String,String> {
 
             VaultPutRequest request  = (VaultPutRequest) JSONUtil.fromJSON(payloadUnwrapped, VaultPutRequest.class);
 
+            Optional<Token> token = tokenManager.put(request.getMerchantId(),request.getCcNumber(),request.getType());
 
 
-
+            response.setRequestId(request.getRequestId());
+            response.setResponseId(UUID.randomUUID().toString());
+            response.setToken(token.get());
             return JSONUtil.toJSON(response);
 
 

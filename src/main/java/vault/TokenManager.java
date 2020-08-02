@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class TokenManager {
 
-    //TODO - support both types of tokens . (FPE and Hash )
+    //TODO - add code for HashF6L4
 
     ConcurrentMap<String,ConcurrentMap<String, CardTuple>>  merchantTokenCCMap = new ConcurrentHashMap<>();
 

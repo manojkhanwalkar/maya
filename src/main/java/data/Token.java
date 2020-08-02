@@ -4,7 +4,7 @@ public class Token {
 
     String value;
 
-    public enum Type { FPE , FPE1 , Hash , HashF6L4};
+    public enum Type { FPE , FPE1 , Hash };
 
      Type type;
 
@@ -23,5 +23,13 @@ public class Token {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "value='" + value + '\'' +
+                ", type=" + type +
+                '}';
     }
 }

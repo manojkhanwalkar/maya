@@ -8,6 +8,16 @@ public class VaultPutRequest {
 
     String merchantId;
 
+    Token.Type type;
+
+    public Token.Type getType() {
+        return type;
+    }
+
+    public void setType(Token.Type type) {
+        this.type = type;
+    }
+
     public String getRequestId() {
         return requestId;
     }
