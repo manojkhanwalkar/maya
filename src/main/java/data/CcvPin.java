@@ -8,8 +8,8 @@ import org.apache.solr.client.solrj.beans.Field;
 public class CcvPin {
 
     String ccv;
-    String ein;
-    String tin;
+    int ein;
+    int tin;
 
 
     public String getCcv() {
@@ -21,23 +21,32 @@ public class CcvPin {
         this.ccv = ccv;
     }
 
-    public String getEin() {
+    public int getEin() {
         return ein;
     }
 
     @Field("ein")
-    public void setEin(String ein) {
+
+    public void setEin(int ein) {
         this.ein = ein;
     }
 
-    public String getTin() {
+    public int getTin() {
         return tin;
     }
 
     @Field("tin")
-    public void setTin(String tin) {
+    public void setTin(int tin) {
         this.tin = tin;
     }
 
 
+    @Override
+    public String toString() {
+        return "CcvPin{" +
+                "ccv='" + ccv + '\'' +
+                ", ein=" + ein +
+                ", tin=" + tin +
+                '}';
+    }
 }

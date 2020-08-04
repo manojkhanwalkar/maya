@@ -8,7 +8,12 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.MapSolrParams;
 import util.JSONUtil;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,7 +29,7 @@ public class FirstSolr {
         HttpSolrClient solr1 = new HttpSolrClient.Builder(urlString1).build();
         solr1.setParser(new XMLResponseParser());
 
-/*        SolrInputDocument document = new SolrInputDocument();
+/*       SolrInputDocument document = new SolrInputDocument();
         document.addField("test", "123456");
         document.addField("name", "Kenmore Dishwasher");
         document.addField("price", "599.99");
@@ -35,32 +40,37 @@ public class FirstSolr {
         solr.addBean( new ProductBean("889", "Apple iPhone 7s", "399.99") );
         solr.commit(); */
 
-      /*  CcvPin cp = new CcvPin();
+
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+       CcvPin cp = new CcvPin();
         cp.setCcv("C1");
-        cp.setEin("E1");
-        cp.setTin("T1");
+        cp.setEin(random.nextInt(Integer.MAX_VALUE));
+        cp.setTin(random.nextInt(Integer.MAX_VALUE));
 
         solr.addBean(cp);
 
         cp.setCcv("C1");
-        cp.setEin("E2");
-        cp.setTin("T2");
+        cp.setEin(random.nextInt(Integer.MAX_VALUE));
+        cp.setTin(random.nextInt(Integer.MAX_VALUE));
 
         solr.addBean(cp);
 
         cp.setCcv("C2");
-        cp.setEin("E2");
-        cp.setTin("T2");
+        cp.setEin(random.nextInt(Integer.MAX_VALUE));
+        cp.setTin(random.nextInt(Integer.MAX_VALUE));
 
         solr.addBean(cp);
+
+
 
         cp.setCcv("C2");
-        cp.setEin("E3");
-        cp.setTin("T3");
+        cp.setEin(random.nextInt(Integer.MAX_VALUE));
+        cp.setTin(random.nextInt(Integer.MAX_VALUE));
 
         solr.addBean(cp);
 
-        solr.commit();*/
+        solr.commit();
 
         SolrQuery query = new SolrQuery();
 
@@ -91,11 +101,13 @@ public class FirstSolr {
 
         solr1.commit();
 
+        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
         {
             SolrQuery query1 = new SolrQuery();
 
-            query1.set("q", "ein:E1");
-            QueryResponse response1 = solr.query(query1);
+            query1.set("q", "id:1991845417");
+            QueryResponse response1 = solr1.query(query1);
 
             SolrDocumentList docList1 = response1.getResults();
 
@@ -106,6 +118,30 @@ public class FirstSolr {
 
 
             }
+
+        }
+
+
+        System.out.println("++++++++++++++++++++++++++++");
+
+        {
+            final Map<String, String> queryParamMap = new HashMap<String, String>();
+            queryParamMap.put("q", "*:*");
+            queryParamMap.put("fl", "id,tin,firstName,lastName");
+           // queryParamMap.put("sort", "ein desc");
+            MapSolrParams queryParams = new MapSolrParams(queryParamMap);
+
+            final QueryResponse response2 = solr1.query( queryParams);
+            final SolrDocumentList documents = response2.getResults();
+
+            for (SolrDocument doc : documents)
+            {
+                System.out.println(doc.jsonStr());
+
+
+
+            }
+
 
         }
 
