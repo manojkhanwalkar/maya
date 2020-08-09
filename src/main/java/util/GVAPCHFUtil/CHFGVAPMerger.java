@@ -23,8 +23,8 @@ public class CHFGVAPMerger {
 
             String card = CardUtil.createVCard();
 
-            chfDataCreator.write(ein1, "FNAME " + i, "LNAME " + i);
-            chfDataCreator.write(ein2, "FNAME " + i + i, "LNAME " + i);
+            chfDataCreator.write(ein1, "FNAME" + i, "LNAME" + i);
+            chfDataCreator.write(ein2, "FNAME" + i + i, "LNAME" + i);
 
             gvapDataCreator.write(ein1,card);
             gvapDataCreator.write(ein2,card);
@@ -39,8 +39,16 @@ public class CHFGVAPMerger {
 
         for (CHFDataRecord chfDataRecord : chf)
         {
-            System.out.println(chfDataRecord + " " + pinGVAPRecord.get(chfDataRecord.getEin()));
+           // System.out.println(chfDataRecord + " " + pinGVAPRecord.get(chfDataRecord.getEin()));
+
+            System.out.println(new CHFGVAPDataRecord(chfDataRecord,pinGVAPRecord.get(chfDataRecord.getEin())));
+
+
         }
+
+
+
+        //TODO - create a new table in solr with the merged data record structure and query by CC number and FNAME and LName
 
     }
 }
