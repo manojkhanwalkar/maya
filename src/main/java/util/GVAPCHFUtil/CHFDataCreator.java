@@ -1,9 +1,6 @@
 package util.GVAPCHFUtil;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,34 +11,34 @@ public class CHFDataCreator {
 
     String dataFileName;
 
-    int rows;
+    BufferedWriter writer;
 
-    public CHFDataCreator(String dataFileName, int rows)
+    public CHFDataCreator(String dataFileName)
     {
         this.dataFileName = dataFileName;
-        this.rows = rows;
+
+        try {
+            writer = new BufferedWriter(new FileWriter(dataFileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    public void create()
+    public void write(int ein, String fname , String lname)
     {
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(dataFileName)))
-        {
 
-            for (int i=0;i<rows;i++) {
-                CHFDataRecord record = CHFDataRecord.create(createEin(), "FNAME"+i, "LNAME" +i);
+        try {
+            CHFDataRecord record = CHFDataRecord.create(ein, fname, lname);
 
-                writer.write(record.getRecord());
-                writer.newLine();
+            writer.write(record.getRecord());
+            writer.newLine();
 
-            }
 
             writer.flush();
-
-        } catch(Exception ex)
-        {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 //
 
@@ -71,16 +68,6 @@ public class CHFDataCreator {
 
     }
 
-    public static void main(String[] args) {
-
-
-        CHFDataCreator dataCreator = new CHFDataCreator("/home/manoj/data/chf.txt" , 100);
-
-  //      dataCreator.create();
-
-     dataCreator.read().stream().forEach(System.out::println);
-
-    }
 
 
 

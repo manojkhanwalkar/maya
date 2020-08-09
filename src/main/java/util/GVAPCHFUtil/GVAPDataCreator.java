@@ -1,9 +1,6 @@
 package util.GVAPCHFUtil;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,36 +11,35 @@ public class GVAPDataCreator {
 
     String dataFileName;
 
-    int rows;
 
-    public GVAPDataCreator(String dataFileName, int rows)
+    BufferedWriter writer;
+
+    public GVAPDataCreator(String dataFileName)
     {
         this.dataFileName = dataFileName;
-        this.rows = rows;
+        try {
+            writer = new BufferedWriter(new FileWriter(dataFileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
-    public void create()
+    public void write(int ein, String card)
     {
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(dataFileName)))
-        {
+        try {
+            GVAPDataRecord record = GVAPDataRecord.create(ein, createTin(), card);
 
-            for (int i=0;i<rows;i++) {
-                GVAPDataRecord record = GVAPDataRecord.create(createEin(), createTin(), createVCard());
-
-                writer.write(record.getRecord());
-                writer.newLine();
-
-            }
+            writer.write(record.getRecord());
+            writer.newLine();
 
             writer.flush();
-
-        } catch(Exception ex)
-        {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-//
+
 
     }
 
@@ -68,17 +64,6 @@ public class GVAPDataCreator {
 
 
         return gvapDataRecords;
-
-    }
-
-    public static void main(String[] args) {
-
-
-        GVAPDataCreator dataCreator = new GVAPDataCreator("/home/manoj/data/gvap.txt" , 100);
-
-       // dataCreator.create();
-
-        dataCreator.read().stream().forEach(System.out::println);
 
     }
 
