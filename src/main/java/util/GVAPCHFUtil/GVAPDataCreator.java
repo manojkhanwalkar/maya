@@ -1,6 +1,4 @@
-package util.GVAPUtil;
-
-import util.CardUtil;
+package util.GVAPCHFUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,7 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static util.CardUtil.*;
 

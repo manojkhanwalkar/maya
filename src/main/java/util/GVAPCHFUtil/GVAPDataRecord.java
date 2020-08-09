@@ -1,6 +1,4 @@
-package util.GVAPUtil;
-
-import org.bouncycastle.jcajce.provider.symmetric.GOST28147;
+package util.GVAPCHFUtil;
 
 public class GVAPDataRecord {
 
