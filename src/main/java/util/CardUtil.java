@@ -3,7 +3,7 @@ package util;
 import com.idealista.fpe.algorithm.ff1.FPE;
 
 import java.security.SecureRandom;
-import java.util.Base64;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.common.hash.Hashing;
@@ -75,6 +75,50 @@ public class CardUtil {
 
         return builder.toString();
 
+    }
+
+
+    public static Set<String> possibleCards(String f6, String l4)
+    {
+        Set<String> results = new HashSet<>();
+
+
+        for (int i=0;i<=999999;i++)
+        {
+
+          /*  if (i%10000==0)
+            {
+                System.out.println("Iteration " + i + "  valid cards so far " + results.size());
+            }*/
+            String str = filler (i,6);
+            StringBuilder builder = new StringBuilder(16);
+            builder.append(f6);
+            builder.append(str);
+            builder.append(l4);
+
+            str = builder.toString();
+
+            if (validateCard(str))
+            {
+                results.add(str);
+            }
+        }
+
+        return results;
+
+    }
+
+    private static String filler(int number, int max)
+    {
+        String str = String.valueOf(number);
+        int length = max-str.length();
+
+        StringBuilder builder = new StringBuilder(max);
+        for (int i=0;i<length;i++)
+            builder.append("0");
+        builder.append(str);
+
+        return builder.toString();
     }
 
     public static boolean validateCard(String str)
@@ -269,6 +313,18 @@ public class CardUtil {
 
     }
 
+
+    static ThreadLocalRandom random = ThreadLocalRandom.current();
+    public static int createEin()
+    {
+        return random.nextInt(Integer.MAX_VALUE);
+
+    }
+
+    public static long createTin()
+    {
+        return random.nextLong(Long.MAX_VALUE);
+    }
 
 
 

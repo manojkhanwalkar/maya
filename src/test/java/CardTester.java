@@ -8,6 +8,7 @@ import vault.TokenManager;
 
 import java.security.SecureRandom;
 import java.util.Optional;
+import java.util.Set;
 
 import static util.CardUtil.*;
 import static util.CardUtil.SHA3HashWithSalt;
@@ -19,8 +20,28 @@ public class CardTester {
 
      //  test();
 
-       test1();
+      // test1();
 
+         test3();
+
+    }
+
+    public static void test3()
+    {
+        String card = CardUtil.createVCard();
+
+        long start = System.nanoTime();
+
+        Set<String> cards = CardUtil.possibleCards(card.substring(0,6), card.substring(12,16));
+
+        long end = System.nanoTime();
+
+        System.out.println("Time taken in nanos " + (end-start));
+
+        System.out.println(card);
+        System.out.println(cards.size());
+
+        System.out.println(cards.contains(card));
 
     }
 
