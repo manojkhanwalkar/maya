@@ -48,14 +48,20 @@ public class CHFGVAPMerger {
                    gvapDataRecords.add(record);
                 });
 
+
+        List<CHFGVAPDataRecord> chfgvapDataRecords = new ArrayList<>();
+
         for (CHFDataRecord chfDataRecord : chf)
         {
            // System.out.println(chfDataRecord + " " + pinGVAPRecord.get(chfDataRecord.getEin()));
 
-            System.out.println(new CHFGVAPDataRecord(chfDataRecord,pinGVAPRecord.get(chfDataRecord.getEin())));
+            chfgvapDataRecords.add(new CHFGVAPDataRecord(chfDataRecord,pinGVAPRecord.get(chfDataRecord.getEin())));
 
 
         }
+
+    //    chfgvapDataRecords.stream().sorted(Comparator.comparingInt(CHFGVAPDataRecord::getEin)).forEach(System.out::println);
+        chfgvapDataRecords.stream().sorted(Comparator.comparing(CHFGVAPDataRecord::getlName)).forEach(System.out::println);
 
 
 

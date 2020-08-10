@@ -11,6 +11,19 @@ public class CHFGVAPDataRecord {
     String fName;
     String lName;
 
+
+    public int getEin() {
+        return ein;
+    }
+
+    public String getfName() {
+        return fName;
+    }
+
+    public String getlName() {
+        return lName;
+    }
+
     public CHFGVAPDataRecord(CHFDataRecord chfDataRecord , List<GVAPDataRecord> gvapDataRecords)
     {
         if (chfDataRecord.getEin() != gvapDataRecords.get(0).getEin())
