@@ -26,11 +26,11 @@ public class GVAPDataCreator {
     }
 
 
-    public void write(int ein, String card)
+    public void write(int ein, long tin, String card)
     {
 
         try {
-            GVAPDataRecord record = GVAPDataRecord.create(ein, createTin(), card);
+            GVAPDataRecord record = GVAPDataRecord.create(ein, tin, card);
 
             writer.write(record.getRecord());
             writer.newLine();

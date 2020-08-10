@@ -2,11 +2,10 @@ package util.GVAPCHFUtil;
 
 import util.CardUtil;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static util.CardUtil.createTin;
 
 public class CHFGVAPMerger {
 
@@ -21,21 +20,33 @@ public class CHFGVAPMerger {
             int ein1 = CardUtil.createEin();
             int ein2 = CardUtil.createEin();
 
-            String card = CardUtil.createVCard();
+            long tin1= createTin();
+            long tin2 = createTin();
+
+            String card1 = CardUtil.createVCard();
+            String cardM = CardUtil.createMCard();
+            String cardF = CardUtil.createMCard();
 
             chfDataCreator.write(ein1, "FNAME" + i, "LNAME" + i);
             chfDataCreator.write(ein2, "FNAME" + i + i, "LNAME" + i);
 
-            gvapDataCreator.write(ein1,card);
-            gvapDataCreator.write(ein2,card);
+            gvapDataCreator.write(ein1,tin1,card1);
+            gvapDataCreator.write(ein1,tin1,cardM);
+            gvapDataCreator.write(ein2,tin2,card1);
+            gvapDataCreator.write(ein2,tin2,cardF);
 
         }
 
-        Map<Integer,GVAPDataRecord>  pinGVAPRecord = new HashMap<>();
+        Map<Integer,List<GVAPDataRecord>>  pinGVAPRecord = new HashMap<>();
 
         var chf = chfDataCreator.read().stream().sorted(Comparator.comparingInt(CHFDataRecord::getEin)).collect(Collectors.toList());
+
         gvapDataCreator.read().stream().sorted(Comparator.comparingInt(GVAPDataRecord::getEin)).
-                forEach(record->{pinGVAPRecord.put(record.getEin(),record);  });
+                forEach(record->{
+                //    pinGVAPRecord.put(record.getEin(),record);
+                   List<GVAPDataRecord> gvapDataRecords =  pinGVAPRecord.computeIfAbsent(record.getEin(),key->  new ArrayList<>());
+                   gvapDataRecords.add(record);
+                });
 
         for (CHFDataRecord chfDataRecord : chf)
         {

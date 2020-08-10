@@ -1,29 +1,33 @@
 package util.GVAPCHFUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CHFGVAPDataRecord {
 
     int ein ;
     long tin;
-    String ccF6L4;
+    List<String> ccF6L4List = new ArrayList<>();
     String fName;
     String lName;
 
-    public CHFGVAPDataRecord(CHFDataRecord chfDataRecord , GVAPDataRecord gvapDataRecord)
+    public CHFGVAPDataRecord(CHFDataRecord chfDataRecord , List<GVAPDataRecord> gvapDataRecords)
     {
-        if (chfDataRecord.getEin() != gvapDataRecord.getEin())
-            throw new RuntimeException("ID does not maych " + chfDataRecord.getEin() + "  " + gvapDataRecord.getEin());
+        if (chfDataRecord.getEin() != gvapDataRecords.get(0).getEin())
+            throw new RuntimeException("ID does not maych " + chfDataRecord.getEin() + "  " + gvapDataRecords.get(0).getEin());
 
 
         ein = chfDataRecord.getEin();
         fName = chfDataRecord.getFName();
         lName = chfDataRecord.getLName();
 
-        tin = gvapDataRecord.getTin();
+        tin = gvapDataRecords.get(0).getTin();
 
-        String tmp = gvapDataRecord.getPAN();
+        gvapDataRecords.forEach(gvapDataRecord -> {
 
-        ccF6L4 = tmp.substring(0,6) + tmp.substring(12,16);
-
+            String tmp = gvapDataRecord.getPAN();
+            ccF6L4List.add(tmp.substring(0,6) + tmp.substring(12,16));
+        });
 
     }
 
@@ -32,7 +36,7 @@ public class CHFGVAPDataRecord {
         return "CHFGVAPDataRecord{" +
                 "ein=" + ein +
                 ", tin=" + tin +
-                ", ccF6L4='" + ccF6L4 + '\'' +
+                ", ccF6L4='" + ccF6L4List + '\'' +
                 ", fName='" + fName + '\'' +
                 ", lName='" + lName + '\'' +
                 '}';
