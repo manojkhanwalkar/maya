@@ -139,6 +139,31 @@ public class Sender {
     }
 
 
+    public NonceResponse send(NonceRequest request, String action)
+    {
+
+
+        Connection app = new Connection(url);
+
+        Optional<String> result = app.sendSimple(JSONUtil.toJSON(request),action);
+
+        if (result.isPresent()) {
+
+            NonceResponse nonceResponse = (NonceResponse) JSONUtil.fromJSON(result.get(), NonceResponse.class);
+
+         return nonceResponse;
+
+        }
+        else
+        {
+            throw new RuntimeException("Error in Verifying ");
+        }
+
+
+    }
+
+
+
     ThreadLocalRandom random = ThreadLocalRandom.current();
 
 

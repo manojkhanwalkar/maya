@@ -1,4 +1,4 @@
-package ccvid;
+package client;
 
 
 import data.*;
@@ -17,7 +17,10 @@ public class CCVIDClient {
 
         sender.init();
 
-       AttributesBuilder attributesBuilder = new AttributesBuilder();
+
+
+
+        AttributesBuilder attributesBuilder = new AttributesBuilder();
 
         Attributes attributes = attributesBuilder.birthDate("1980-1-1").cardNumber("1588213088725991").email("ttt@ttt.com").familyName("Hawking").givenName("Elm")
                 .phoneNumber("+18002003456").residentAddress("Univ street").residentCity("Princeton").residentCountry("USA")

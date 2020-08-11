@@ -15,6 +15,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 
 @Path("/")
@@ -63,6 +64,29 @@ ClientCache clientCache = new ClientCache();
 
 
     }
+
+
+    NonceManager nonceManager = new NonceManager();
+
+
+    @POST
+    @Timed
+    @Path("/nonce")
+    @Produces(MediaType.APPLICATION_JSON)
+    public NonceResponse nonce(NonceRequest nonceRequest) {
+
+
+        ArrayList<String> results = nonceManager.getNonces(nonceRequest.getNumber());
+
+        NonceResponse nonceResponse = new NonceResponse();
+
+        nonceResponse.setNonces(results);
+
+        return nonceResponse;
+
+    }
+
+
 
 
 
