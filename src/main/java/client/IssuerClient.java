@@ -22,6 +22,8 @@ public class IssuerClient {
         cardRequest.setRequestId(UUID.randomUUID().toString());
         cardRequest.setUserId("User1");
 
+        cardRequest.setName("Joe SizPack");
+
 
         String payload = JSONUtil.toJSON(cardRequest);
 

@@ -6,6 +6,16 @@ public class Card {
     String expiryDate;
     String secCode;
 
+    String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getPan() {
         return pan;
     }

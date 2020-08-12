@@ -24,7 +24,9 @@ public class CardIssuer implements Processor<String,String> {
         card.setSecCode(CardUtil.securityCode(3));
 
 
+
         CardRequest cardRequest = (CardRequest) JSONUtil.fromJSON(payloadUnwrapped, CardRequest.class);
+        card.setName(cardRequest.getName());
 
         CardResponse cardResponse = new CardResponse();
         cardResponse.setCard(card);

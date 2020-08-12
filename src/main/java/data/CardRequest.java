@@ -21,4 +21,14 @@ public class CardRequest {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+    String name ;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
