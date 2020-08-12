@@ -7,6 +7,7 @@ import util.HashCardTuple;
 import vault.TokenManager;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,7 +23,15 @@ public class CardTester {
 
       // test1();
 
-         test3();
+        // test3();
+
+        String str = LocalDate.now().plusYears(4).toString();
+
+        System.out.println(str);
+
+       LocalDate test =  LocalDate.parse(str);
+
+       System.out.println(test);
 
     }
 

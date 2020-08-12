@@ -327,5 +327,17 @@ public class CardUtil {
     }
 
 
+    public static String securityCode(int length)
+    {
+
+        StringBuilder builder = new StringBuilder();
+        for (int i=0;i<length;i++)
+        {
+            int code = random.nextInt(10);
+            builder.append(code);
+        }
+
+        return builder.toString();
+    }
 
 }
