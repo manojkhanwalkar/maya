@@ -2,6 +2,7 @@ package util.GVAPCHFUtil;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static util.CardUtil.*;
@@ -22,6 +23,14 @@ public class GVAPDataCreator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+
+    public GVAPDataCreator(String dataFileName, String mode)
+    {
+        this.dataFileName = dataFileName;
+
 
     }
 
@@ -65,8 +74,50 @@ public class GVAPDataCreator {
 
         return gvapDataRecords;
 
+
     }
 
 
+    public Iterator<GVAPDataRecord> iterator()
+    {
+            return new GVAPIterator(dataFileName);
+    }
+
+
+    static class GVAPIterator implements Iterator<GVAPDataRecord> {
+        BufferedReader reader;
+
+        public GVAPIterator(String dataFileName) {
+            try {
+                reader = new BufferedReader(new FileReader(dataFileName));
+                line = reader.readLine();
+                if (line == null) more = false;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        boolean more = true;
+        String line;
+
+        @Override
+        public boolean hasNext() {
+            return more;
+        }
+
+        @Override
+        public GVAPDataRecord next() {
+            GVAPDataRecord record = GVAPDataRecord.create(line);
+            try {
+                line = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (line == null) more = false;
+            return record;
+        }
+
+    }
 
 }

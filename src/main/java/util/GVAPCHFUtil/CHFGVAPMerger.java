@@ -3,69 +3,133 @@ package util.GVAPCHFUtil;
 import util.CardUtil;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static util.CardUtil.createTin;
 
 public class CHFGVAPMerger {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
 
-        CHFDataCreator chfDataCreator = new CHFDataCreator("/home/manoj/data/chf");
 
-        GVAPDataCreator gvapDataCreator = new GVAPDataCreator("/home/manoj/data/gvap");
+/*        final int count = 1000000;
 
-        for (int i=0;i<100;i++) {
-            int ein1 = CardUtil.createEin();
-            int ein2 = CardUtil.createEin();
 
-            long tin1= createTin();
-            long tin2 = createTin();
+        for (int j=0;j<5;j++) {
+            CHFDataCreator chfDataCreator = new CHFDataCreator("/home/manoj/data//chfgvap/chf"+j );
 
-            String card1 = CardUtil.createVCard();
-            String cardM = CardUtil.createMCard();
-            String cardF = CardUtil.createMCard();
 
-            chfDataCreator.write(ein1, "FNAME" + i, "LNAME" + i);
-            chfDataCreator.write(ein2, "FNAME" + i + i, "LNAME" + i);
+            GVAPDataCreator gvapDataCreator = new GVAPDataCreator("/home/manoj/data/chfgvap/gvap"+j);
 
-            gvapDataCreator.write(ein1,tin1,card1);
-            gvapDataCreator.write(ein1,tin1,cardM);
-            gvapDataCreator.write(ein2,tin2,card1);
-            gvapDataCreator.write(ein2,tin2,cardF);
+
+            for (int i = 0; i < count; i++) {
+                int ein1 = CardUtil.createEin();
+                int ein2 = CardUtil.createEin();
+
+                long tin1 = createTin();
+                long tin2 = createTin();
+
+                String card1 = CardUtil.createVCard();
+                String cardM = CardUtil.createMCard();
+                String cardF = CardUtil.createMCard();
+                String cardMM = CardUtil.createMCard();
+                String cardFF = CardUtil.createMCard();
+                String cardMMM = CardUtil.createMCard();
+                String cardFFF = CardUtil.createMCard();
+
+                chfDataCreator.write(ein1, "MrFNAME" + i, "LNAME" + i);
+                chfDataCreator.write(ein2, "MRSFNAME" + i, "LNAME" + i);
+
+                gvapDataCreator.write(ein1, tin1, card1);
+                gvapDataCreator.write(ein1, tin1, cardM);
+                gvapDataCreator.write(ein1, tin1, cardMM);
+                gvapDataCreator.write(ein1, tin1, cardMMM);
+                gvapDataCreator.write(ein2, tin2, card1);
+                gvapDataCreator.write(ein2, tin2, cardF);
+                gvapDataCreator.write(ein2, tin2, cardFF);
+                gvapDataCreator.write(ein2, tin2, cardFFF);
+
+            }
+
+
+        }*/
+
+
+
+        CompletableFuture<Void> [] cfs = new CompletableFuture[5];
+        for (int j=0;j<5;j++) {
+
+            final int index = j;
+
+            cfs[j] =  CompletableFuture.runAsync(()-> {
+                CHFDataCreator chfDataCreator = new CHFDataCreator("/home/manoj/data//chfgvap/chf" + index, "");
+
+
+                chfDataCreator.readIntoMap();
+
+            });
+
+
+
+
+
+
+
 
         }
 
-        Map<Integer,List<GVAPDataRecord>>  pinGVAPRecord = new HashMap<>();
-
-        var chf = chfDataCreator.read().stream().sorted(Comparator.comparingInt(CHFDataRecord::getEin)).collect(Collectors.toList());
-
-        gvapDataCreator.read().stream().sorted(Comparator.comparingInt(GVAPDataRecord::getEin)).
-                forEach(record->{
-                //    pinGVAPRecord.put(record.getEin(),record);
-                   List<GVAPDataRecord> gvapDataRecords =  pinGVAPRecord.computeIfAbsent(record.getEin(),key->  new ArrayList<>());
-                   gvapDataRecords.add(record);
-                });
+        CompletableFuture.allOf(cfs).join();
 
 
-        List<CHFGVAPDataRecord> chfgvapDataRecords = new ArrayList<>();
+        System.out.println("CHF size " + (CHFDataCreator.chfDataRecords.size()));
 
-        for (CHFDataRecord chfDataRecord : chf)
-        {
-           // System.out.println(chfDataRecord + " " + pinGVAPRecord.get(chfDataRecord.getEin()));
 
-            chfgvapDataRecords.add(new CHFGVAPDataRecord(chfDataRecord,pinGVAPRecord.get(chfDataRecord.getEin())));
+        var chfMap = CHFDataCreator.chfDataRecords;
+
+        AtomicInteger matchCount = new AtomicInteger(0);
+
+        Function<String,Runnable> func = (fileName) -> {
+
+            Runnable runnable = ()-> {
+
+                GVAPDataCreator gvapDataCreator = new GVAPDataCreator(fileName , "");
+
+
+                var iter = gvapDataCreator.iterator();
+
+                while (iter.hasNext()) {
+                    GVAPDataRecord record = iter.next();
+                    CHFInMemDataRecord chfInMemDataRecord = chfMap.get(record.getEin());
+                    if (chfInMemDataRecord != null) {
+                        matchCount.incrementAndGet();
+                    }
+                }
+
+
+            };
+
+         return runnable;
+
+        };
+
+
+
+        for (int j=0;j<5;j++) {
+
+            cfs[j]= CompletableFuture.runAsync(func.apply("/home/manoj/data/chfgvap/gvap"+j));
+
 
 
         }
 
-    //    chfgvapDataRecords.stream().sorted(Comparator.comparingInt(CHFGVAPDataRecord::getEin)).forEach(System.out::println);
-        chfgvapDataRecords.stream().sorted(Comparator.comparing(CHFGVAPDataRecord::getlName)).forEach(System.out::println);
+        CompletableFuture.allOf(cfs).join();
 
-
-
-        //TODO - create a new table in solr with the merged data record structure and query by CC number and FNAME and LName
+        System.out.println("Matched records " + matchCount);
 
     }
 }

@@ -2,7 +2,11 @@ package util.GVAPCHFUtil;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static util.CardUtil.*;
 
@@ -23,6 +27,15 @@ public class CHFDataCreator {
             e.printStackTrace();
         }
     }
+
+    public CHFDataCreator(String dataFileName, String mode)
+    {
+        this.dataFileName = dataFileName;
+
+       // dummy param to make it read only
+    }
+
+
 
 
     public void write(int ein, String fname , String lname)
@@ -68,6 +81,33 @@ public class CHFDataCreator {
 
     }
 
+
+    static ConcurrentMap<Integer,CHFInMemDataRecord> chfDataRecords = new ConcurrentHashMap<>(10240001);
+
+    public Map<Integer,CHFInMemDataRecord> readIntoMap()
+    {
+
+
+        try(BufferedReader reader= new BufferedReader(new FileReader(dataFileName)))
+        {
+            String line = reader.readLine();
+            while(line!=null)
+            {
+                CHFInMemDataRecord record = CHFInMemDataRecord.create(line);
+
+                chfDataRecords.put(record.ein, record);
+
+
+                line = reader.readLine();
+
+            }
+
+        }catch(Exception ex) {ex.printStackTrace(); }
+
+
+        return chfDataRecords;
+
+    }
 
 
 

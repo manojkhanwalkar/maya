@@ -315,9 +315,13 @@ public class CardUtil {
 
 
     static ThreadLocalRandom random = ThreadLocalRandom.current();
+
+    static int number = 0;
     public static int createEin()
     {
-        return random.nextInt(Integer.MAX_VALUE);
+        //return random.nextInt(Integer.MAX_VALUE);
+
+        return number++;
 
     }
 
