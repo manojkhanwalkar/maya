@@ -1,5 +1,6 @@
 package util.GVAPCHFUtil;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import util.CardUtil;
 
 import java.util.*;
@@ -60,30 +61,28 @@ public class CHFGVAPMerger {
         }*/
 
 
+        {
+            CompletableFuture<Void>[] cfs = new CompletableFuture[5];
+            for (int j = 0; j < 5; j++) {
 
-        CompletableFuture<Void> [] cfs = new CompletableFuture[5];
-        for (int j=0;j<5;j++) {
+                final int index = j;
 
-            final int index = j;
-
-            cfs[j] =  CompletableFuture.runAsync(()-> {
-                CHFDataCreator chfDataCreator = new CHFDataCreator("/home/manoj/data//chfgvap/chf" + index, "");
-
-
-                chfDataCreator.readIntoMap();
-
-            });
+                cfs[j] = CompletableFuture.runAsync(() -> {
+                    CHFDataCreator chfDataCreator = new CHFDataCreator("/home/manoj/data//chfgvap/chf" + index, "");
 
 
+                     chfDataCreator.readIntoMap();
 
 
+                });
 
+            }
+
+            CompletableFuture.allOf(cfs).join();
 
 
 
         }
-
-        CompletableFuture.allOf(cfs).join();
 
 
         System.out.println("CHF size " + (CHFDataCreator.chfDataRecords.size()));
@@ -118,6 +117,7 @@ public class CHFGVAPMerger {
         };
 
 
+        CompletableFuture<Void>[] cfs = new CompletableFuture[5];
 
         for (int j=0;j<5;j++) {
 

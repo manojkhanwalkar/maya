@@ -1,5 +1,8 @@
 package util.GVAPCHFUtil;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+import util.TroveMapWrapper;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,10 +85,13 @@ public class CHFDataCreator {
     }
 
 
-    static ConcurrentMap<Integer,CHFInMemDataRecord> chfDataRecords = new ConcurrentHashMap<>(10240001);
+   static TroveMapWrapper<CHFInMemDataRecord> chfDataRecords = new TroveMapWrapper<>(5,10240001/5);
 
-    public Map<Integer,CHFInMemDataRecord> readIntoMap()
+
+    public  void readIntoMap()
     {
+
+        //TIntObjectHashMap<CHFInMemDataRecord> chfDataRecords = new TIntObjectHashMap<>(1024001);
 
 
         try(BufferedReader reader= new BufferedReader(new FileReader(dataFileName)))
@@ -105,7 +111,7 @@ public class CHFDataCreator {
         }catch(Exception ex) {ex.printStackTrace(); }
 
 
-        return chfDataRecords;
+
 
     }
 
