@@ -9,7 +9,7 @@ public class PinPii {
 
 
     int ein;
-    int tin;
+
     String FName;
     String LName;
 
@@ -23,17 +23,6 @@ public class PinPii {
     public void setEin(int ein) {
         this.ein = ein;
     }
-
-    public int getTin() {
-        return tin;
-    }
-
-    @Field("tin")
-
-    public void setTin(int tin) {
-        this.tin = tin;
-    }
-
 
 
 
@@ -65,7 +54,7 @@ public class PinPii {
     public String toString() {
         return "PinPii{" +
                 "ein=" + ein +
-                ", tin=" + tin +
+
                 ", FName='" + FName + '\'' +
                 ", LName='" + LName + '\'' +
                 '}';

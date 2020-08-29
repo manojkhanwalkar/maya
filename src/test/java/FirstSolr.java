@@ -90,7 +90,6 @@ public class FirstSolr {
 
             PinPii pp = new PinPii();
             pp.setEin(cp1.getEin());
-            pp.setTin(cp1.getTin());
 
             pp.setFName("FN"+count);
             pp.setLName("LN" + count);

@@ -124,7 +124,7 @@ public class BatchProcessor {
 
         Supplier<Task> taskSupplier = () ->  {return new PrintTaskHandler();  };
 
-        BatchProcessor batchProcessor = new BatchProcessor(2,2,taskSupplier,"/home/manoj/data/vfs/data" );
+        BatchProcessor batchProcessor = new BatchProcessor(1,1,taskSupplier,"/home/manoj/data/vfs/data" );
 
         batchProcessor.batch();
 
