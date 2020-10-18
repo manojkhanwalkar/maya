@@ -26,7 +26,7 @@ public class CHFGVAPSolrMerger {
         //5040883693945693
 
 
-        List<PinCCVPii> list1 = merge.query("firstName:MrFNAME~1" ,PinCCVPii.class);
+        List<PinCCVPii> list1 = merge.query("firstName:MrFNAME~2" ,PinCCVPii.class);
 
         System.out.println(list1);
 

@@ -7,6 +7,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -94,6 +95,25 @@ public class Connection {
             HttpResponse<String> response =
                     client.send(httprequest, HttpResponse.BodyHandlers.ofString());
 
+            if (response.statusCode()== 303) {
+
+                String newurl = response.headers().firstValue("location").get();
+
+                String clickResponse = response.headers().firstValue("ClickResponse").get();
+
+                httprequest = HttpRequest.newBuilder()
+                        .uri(URI.create(newurl))
+                        .GET()
+                        .timeout(Duration.ofMinutes(1))
+                        .header("ClickResponse",clickResponse)
+                        .build();
+
+                response =
+                        client.send(httprequest, HttpResponse.BodyHandlers.ofString());
+
+            }
+
+
             return response.body();
 
         } catch (Exception ex)
@@ -104,6 +124,74 @@ public class Connection {
 
     }
 
+    public HttpResponse post1(String str , String url) //throws Exception
+    {
+
+        try {
+            HttpRequest httprequest = HttpRequest.newBuilder()
+                    .uri(URI.create(target + url))
+                    .header("Content-Type", "application/json")
+                    //  .header("HMAC" , HMACUtil.calculateHMAC(str,HmacKey))
+                    .POST(HttpRequest.BodyPublishers.ofString(str))
+                    .timeout(Duration.ofMinutes(1))
+                    .build();
+
+
+            HttpResponse<String> response =
+                    client.send(httprequest, HttpResponse.BodyHandlers.ofString());
+
+
+            return response;
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return null ;
+
+
+    }
+
+    public HttpResponse post1(String str, String url, Map<String,String> headers) //throws Exception
+    {
+
+        try {
+           var builder = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json");
+
+           headers.entrySet().forEach(entry->{
+
+               builder.header(entry.getKey(), entry.getValue());
+           });
+
+            HttpRequest httprequest =  builder.POST(HttpRequest.BodyPublishers.ofString(str))
+                    .timeout(Duration.ofMinutes(1))
+                    .build();
+
+
+            HttpResponse<String> response =
+                    client.send(httprequest, HttpResponse.BodyHandlers.ofString());
+
+
+            return response;
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return null ;
+
+
+    }
 
 
 

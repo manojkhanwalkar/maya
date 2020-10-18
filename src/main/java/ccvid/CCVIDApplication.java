@@ -1,5 +1,6 @@
 package ccvid;
 
+import cm.CMResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -31,9 +32,16 @@ public class CCVIDApplication extends Application<CCVIDConfiguration> {
                 configuration.getDefaultName()
         );
 
+        final CMResource resource1 = new CMResource(
+                configuration.getTemplate(),
+                configuration.getDefaultName()
+        );
+
 
         environment.jersey().register(resource);
-      //  environment.healthChecks().register("APIHealthCheck", new AppHealthCheck());
+        environment.jersey().register(resource1);
+
+        //  environment.healthChecks().register("APIHealthCheck", new AppHealthCheck());
 
 
 
