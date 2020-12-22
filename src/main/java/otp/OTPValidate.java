@@ -1,8 +1,8 @@
-package otp.pm;
+package otp;
 
-public class OTPResponse {
-
+public class OTPValidate {
     String messageId;
+    String OTP;
 
     public String getMessageId() {
         return messageId;
@@ -10,5 +10,13 @@ public class OTPResponse {
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    public String getOTP() {
+        return OTP;
+    }
+
+    public void setOTP(String OTP) {
+        this.OTP = OTP;
     }
 }

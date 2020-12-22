@@ -1,4 +1,4 @@
-package otp.pm;
+package otp;
 
 public class OTPValidateResponse {
 

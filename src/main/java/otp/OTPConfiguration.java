@@ -1,4 +1,4 @@
-package otp.pm;
+package otp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;

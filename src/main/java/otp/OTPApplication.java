@@ -1,4 +1,4 @@
-package otp.pm;
+package otp;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;

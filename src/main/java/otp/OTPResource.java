@@ -1,15 +1,12 @@
-package otp.pm;
+package otp;
 
 
 import com.codahale.metrics.annotation.Timed;
-import data.PMRequest;
-import data.PMResponse;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.Optional;
 import java.util.Random;
 
 
