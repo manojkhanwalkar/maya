@@ -158,7 +158,7 @@
             <version>2.8</version>
         </dependency>
 
-       <!-- <dependency>
+        <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>bom</artifactId>
             <version>2.13.36</version>
@@ -176,7 +176,7 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb-enhanced</artifactId>
             <version>2.13.36</version>
-        </dependency> -->
+        </dependency>
 
         <dependency>
             <groupId>com.idealista</groupId>
