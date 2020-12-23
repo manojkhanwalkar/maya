@@ -40,4 +40,14 @@ public class EmailSMS {
 
     }
 
+    public static void main(String[] args) {
+
+        EmailSMS emailSMS = new EmailSMS();
+
+        String id = emailSMS.send("manoj_khanwalkar@hotmail.com");
+
+        System.out.println(id);
+    }
+
+
 }
