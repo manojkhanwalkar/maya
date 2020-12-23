@@ -51,7 +51,7 @@ public class OTPManager {
 
         }
 
-        long expiryTime = System.currentTimeMillis() + 1000;
+        long expiryTime = System.currentTimeMillis() + 1000*60;
         OTPResponse response = futureResponse.get();
         var idOtpExpiryTuple = new IdOTPTimeTuple(response.getMessageId(),otp,expiryTime );
 
@@ -65,16 +65,24 @@ public class OTPManager {
 
         OTPValidateResponse response = new OTPValidateResponse();
         response.setMessageId(request.getMessageId());
-        var idOtpExpiryTuple = idotpexpiryMap.remove(request.getMessageId());
+        var idOtpExpiryTuple = idotpexpiryMap.get(request.getMessageId());
         if (idOtpExpiryTuple!=null)
         {
             if (idOtpExpiryTuple.getExpiryTime()<System.currentTimeMillis())
             {
                 response.setResponse(OTPValidateResponse.Response.Expired);
+                idotpexpiryMap.remove(request.getMessageId());
             }
             else
             {
-                response.setResponse(OTPValidateResponse.Response.Valid);
+                if (request.getOTP().equals(idOtpExpiryTuple.getOTP())) {
+                    response.setResponse(OTPValidateResponse.Response.Valid);
+                    idotpexpiryMap.remove(request.getMessageId());
+                }
+                else {
+                    // do not remove from the map , user can retry
+                    response.setResponse(OTPValidateResponse.Response.Invalid);
+                }
             }
 
         }

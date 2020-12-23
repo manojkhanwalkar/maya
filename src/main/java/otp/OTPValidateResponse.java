@@ -2,7 +2,9 @@ package otp;
 
 public class OTPValidateResponse {
 
-    public enum Response { Valid , Invalid , Expired};
+    public enum Response {Valid, Invalid, Expired}
+
+    ;
     String messageId;
     Response response;
 
@@ -20,5 +22,13 @@ public class OTPValidateResponse {
 
     public void setResponse(Response response) {
         this.response = response;
+    }
+
+    @Override
+    public String toString() {
+        return "OTPValidateResponse{" +
+                "messageId='" + messageId + '\'' +
+                ", response=" + response +
+                '}';
     }
 }
