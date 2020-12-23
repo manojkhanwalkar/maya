@@ -21,7 +21,7 @@ public class EmailSMS {
     }
 
     @SneakyThrows
-    public String send(String to)
+    public String send(String to, String otp)
     {
             SendEmailRequest request = new SendEmailRequest()
                     .withDestination(
@@ -29,7 +29,7 @@ public class EmailSMS {
                     .withMessage(new Message()
                             .withBody(new Body()
                                     .withText(new Content()
-                                            .withCharset("UTF-8").withData("Your OTP is" + OTPString())))
+                                            .withCharset("UTF-8").withData("Your OTP is" + otp)))
                             .withSubject(new Content()
                                     .withCharset("UTF-8").withData("OTP Test")))
                     .withSource("manojkhanwalkar@gmail.com");
@@ -44,7 +44,7 @@ public class EmailSMS {
 
         EmailSMS emailSMS = new EmailSMS();
 
-        String id = emailSMS.send("manoj_khanwalkar@hotmail.com");
+        String id = emailSMS.send("manoj_khanwalkar@hotmail.com", OTPString());
 
         System.out.println(id);
     }

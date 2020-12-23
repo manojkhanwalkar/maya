@@ -9,23 +9,23 @@ public class IdOTPTimeTuple implements Comparable<IdOTPTimeTuple> {
     String OTP;
     long expiryTime;
 
+    public IdOTPTimeTuple(String id, String OTP) {
+        this.id = id;
+        this.OTP = OTP;
+    }
+
+    public IdOTPTimeTuple(String id, String OTP, long expiryTime) {
+        this.id = id;
+        this.OTP = OTP;
+        this.expiryTime = expiryTime;
+    }
+
     @Override
     public int compareTo(IdOTPTimeTuple other) {
         return Long.compare(this.getExpiryTime(),other.getExpiryTime() );
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        IdOTPTimeTuple that = (IdOTPTimeTuple) o;
-        return id.equals(that.id) && OTP.equals(that.OTP);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, OTP);
-    }
 
     public String getId() {
         return id;

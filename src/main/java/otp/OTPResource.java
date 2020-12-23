@@ -34,7 +34,7 @@ public class OTPResource {
     @Produces(MediaType.APPLICATION_JSON)
     public OTPValidateResponse verify(OTPValidate request) {
 
-        return null;
+        return manager.validateOTP(request);
 
     }
 

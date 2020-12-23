@@ -35,6 +35,28 @@ public class OTPClient {
     }
 
 
+
+    public static OTPValidateResponse submit(OTPValidate request)
+    {
+
+        Connection app = new Connection("https://localhost:10080/");
+
+        Optional<String> result = app.sendSimple(JSONUtil.toJSON(request),"verify");
+
+        System.out.println(result);
+
+        if (result.isPresent())
+        {
+            return (OTPValidateResponse) JSONUtil.fromJSON(result.get(), OTPValidateResponse.class);
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+
+
     public static void main(String[] args) {
 
         {
@@ -58,7 +80,23 @@ public class OTPClient {
 
         }
 
+     /*   {
+
+            OTPValidate request = new OTPValidate();
+            request.setMessageId();
+            request.setOTP();
+
+            OTPValidateResponse pmResponse = OTPClient.submit(request);
+
+            System.out.println(pmResponse);
+
+        }*/
+
+
+
     }
+
+
 
 
 }

@@ -26,10 +26,10 @@ public class PhoneSMS {
         smsAttributes.put("AWS.SNS.SMS.SMSType",new MessageAttributeValue().withStringValue("Transactional").withDataType("String"));
     }
 
-    public String send(String phoneNum)
+    public String send(String phoneNum, String otp)
     {
         PublishRequest request = new PublishRequest();
-        request.withMessage("Your 6 digit OTP code is " + OTPString())
+        request.withMessage("Your 6 digit OTP code is " + otp)
                 .withPhoneNumber(phoneNum)
                 .withMessageAttributes(smsAttributes);
         PublishResult result=snsClient.publish(request);
@@ -42,7 +42,7 @@ public class PhoneSMS {
 
         PhoneSMS phoneSMS = new PhoneSMS();
 
-        String id = phoneSMS.send("+17327620499");
+        String id = phoneSMS.send("+17327620499", OTPString());
 
         System.out.println(id);
     }
