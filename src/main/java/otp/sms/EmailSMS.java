@@ -4,42 +4,40 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 
-import static otp.sms.PhoneSMS.OTPString;
+import static otp.sms.SMSUtil.OTPString;
 
 
 public class EmailSMS {
 
-    public static void main(String[] args) throws IOException {
+    final AmazonSimpleEmailService client;
+    public EmailSMS() {
+        client = AmazonSimpleEmailServiceClientBuilder.standard()
+                .withRegion(Regions.US_EAST_1).build();
 
-        try {
-            AmazonSimpleEmailService client =
-                    AmazonSimpleEmailServiceClientBuilder.standard()
+    }
 
-                            // Replace US_WEST_2 with the AWS Region you're using for
-                            // Amazon SES.
-                            .withRegion(Regions.US_EAST_1).build();
+    @SneakyThrows
+    public String send(String to)
+    {
             SendEmailRequest request = new SendEmailRequest()
                     .withDestination(
-                            new Destination().withToAddresses("xxx@hotmail.com"))
+                            new Destination().withToAddresses(to))
                     .withMessage(new Message()
                             .withBody(new Body()
                                     .withText(new Content()
                                             .withCharset("UTF-8").withData("Your OTP is" + OTPString())))
                             .withSubject(new Content()
                                     .withCharset("UTF-8").withData("OTP Test")))
-                    .withSource("yyy@gmail.com");
-                    // Comment or remove the next line if you are not using a
-                    // configuration set
-                   // .withConfigurationSetName(CONFIGSET);
-            client.sendEmail(request);
-            System.out.println("Email sent!");
-        } catch (Exception ex) {
-            System.out.println("The email was not sent. Error message: "
-                    + ex.getMessage());
-        }
+                    .withSource("manojkhanwalkar@gmail.com");
+
+            SendEmailResult result = client.sendEmail(request);
+
+            return result.getMessageId();
+
     }
 
 }

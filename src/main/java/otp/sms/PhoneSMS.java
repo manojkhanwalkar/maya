@@ -11,42 +11,35 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static otp.sms.SMSUtil.OTPString;
+
 public class PhoneSMS {
 
-
-    public static void main(String[] args) {
-        AmazonSNS snsClient = AmazonSNSClientBuilder.standard()
+    final AmazonSNS snsClient;
+    final Map<String, MessageAttributeValue> smsAttributes;
+    public PhoneSMS() {
+        snsClient  = AmazonSNSClientBuilder.standard()
                 .withRegion(Regions.US_EAST_1).build();
-               // .withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
 
-        Map<String, MessageAttributeValue> smsAttributes = new HashMap<String, MessageAttributeValue>();
+        smsAttributes= new HashMap<String, MessageAttributeValue>();
         //smsAttributes.put("AWS.SNS.SMS.SenderID",new MessageAttributeValue().withStringValue("SENDER-ID").withDataType("String"));
         smsAttributes.put("AWS.SNS.SMS.SMSType",new MessageAttributeValue().withStringValue("Transactional").withDataType("String"));
+    }
 
+    public String send(String phoneNum)
+    {
         PublishRequest request = new PublishRequest();
         request.withMessage("Your 6 digit OTP code is " + OTPString())
                 .withPhoneNumber("7015168317")
                 .withMessageAttributes(smsAttributes);
         PublishResult result=snsClient.publish(request);
 
-        System.out.println(result);
+        return result.getMessageId();
+
     }
 
-    static ThreadLocalRandom random = ThreadLocalRandom.current();
 
 
-
-    public static String OTPString()
-    {
-
-        StringBuilder builder = new StringBuilder(6);
-        for (int i=0;i<6;i++)
-        {
-            builder.append(random.nextInt(10));
-        }
-
-        return builder.toString();
-    }
 
 
 }
