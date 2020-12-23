@@ -30,7 +30,7 @@ public class PhoneSMS {
     {
         PublishRequest request = new PublishRequest();
         request.withMessage("Your 6 digit OTP code is " + OTPString())
-                .withPhoneNumber("7015168317")
+                .withPhoneNumber(phoneNum)
                 .withMessageAttributes(smsAttributes);
         PublishResult result=snsClient.publish(request);
 

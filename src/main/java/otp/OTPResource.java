@@ -27,10 +27,6 @@ public class OTPResource {
     }
 
 
-
-Random random = new Random() ;
-
-
     @POST
     @Timed
     @Path("/verify")
