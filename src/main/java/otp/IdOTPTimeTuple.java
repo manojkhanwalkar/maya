@@ -50,4 +50,13 @@ public class IdOTPTimeTuple implements Comparable<IdOTPTimeTuple> {
     public void setExpiryTime(long expiryTime) {
         this.expiryTime = expiryTime;
     }
+
+    @Override
+    public String toString() {
+        return "IdOTPTimeTuple{" +
+                "id='" + id + '\'' +
+                ", OTP='" + OTP + '\'' +
+                ", expiryTime=" + expiryTime +
+                '}';
+    }
 }

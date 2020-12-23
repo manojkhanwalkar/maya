@@ -24,6 +24,14 @@ public class OTPManager {
 
      */
 
+    ExpiredOTPProcessor expiredOTPProcessor ;
+    public OTPManager()
+    {
+        expiredOTPProcessor = new ExpiredOTPProcessor(idotpexpiryMap);
+
+
+    }
+
     @SneakyThrows
     public OTPResponse generateOTP(OTPRequest request) {
 
@@ -51,11 +59,13 @@ public class OTPManager {
 
         }
 
-        long expiryTime = System.currentTimeMillis() + 1000*60;
+        long expiryTime = System.currentTimeMillis() + 1000*10;
         OTPResponse response = futureResponse.get();
         var idOtpExpiryTuple = new IdOTPTimeTuple(response.getMessageId(),otp,expiryTime );
 
         idotpexpiryMap.put(response.getMessageId(),idOtpExpiryTuple);
+
+        expiredOTPProcessor.add(idOtpExpiryTuple);
 
         return response;
 

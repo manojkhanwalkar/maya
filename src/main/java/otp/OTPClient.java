@@ -86,7 +86,7 @@ public class OTPClient {
 
         // valid message , valid OTP test
 
-        {
+    /*    {
 
             OTPValidate request = new OTPValidate();
             request.setMessageId("0100017690007645-fd65ad7e-5235-4b28-bd3f-c38eb1a76d24-000000");
@@ -96,7 +96,7 @@ public class OTPClient {
 
             System.out.println(pmResponse);
 
-        }
+        }*/
 
    /*     // valid message id , invalid otp test
         {
