@@ -26,6 +26,7 @@ public class OTPResource {
 
     }
 
+    OTPManager manager = new OTPManager();
 
     @POST
     @Timed
@@ -48,7 +49,8 @@ public class OTPResource {
 
   public OTPResponse otp(OTPRequest request) {
 
-        return null;
+        return manager.generateOTP(request);
+
     }
 
 

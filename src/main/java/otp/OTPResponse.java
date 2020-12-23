@@ -11,4 +11,11 @@ public class OTPResponse {
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
+
+    @Override
+    public String toString() {
+        return "OTPResponse{" +
+                "messageId='" + messageId + '\'' +
+                '}';
+    }
 }

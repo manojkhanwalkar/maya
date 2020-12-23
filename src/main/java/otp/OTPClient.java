@@ -14,28 +14,22 @@ public class OTPClient {
 
 
 
-    public static PMResponse submit(Attributes attributes)
+    public static OTPResponse submit(OTPRequest request)
     {
-        // send to scheduler a jar file and client name and get back a job id .
 
-        // System.out.println(profileId);
+        Connection app = new Connection("https://localhost:10080/");
 
-
-        PMRequest pmRequest = new PMRequest();
-        pmRequest.setAttributes(attributes);
-        Connection app = new Connection("https://localhost:8280/");
-
-        Optional<String> result = app.sendSimple(JSONUtil.toJSON(pmRequest),"verify1");
+        Optional<String> result = app.sendSimple(JSONUtil.toJSON(request),"otp");
 
        System.out.println(result);
 
        if (result.isPresent())
        {
-           return (PMResponse) JSONUtil.fromJSON(result.get(), PMResponse.class);
+           return (OTPResponse) JSONUtil.fromJSON(result.get(), OTPResponse.class);
        }
       else
        {
-           return PMResponse.getEMPTY();
+           return null;
        }
 
     }
@@ -43,14 +37,26 @@ public class OTPClient {
 
     public static void main(String[] args) {
 
-        AttributesBuilder attributesBuilder = new AttributesBuilder();
+        {
+            OTPRequest request = new OTPRequest();
+            request.setPhoneNumOrEmail("+17327620499");
+            request.setType(OTPRequest.Type.Phone);
 
-        Attributes attributes = attributesBuilder.birthDate("1980-1-1").cardNumber("1588213088725991").email("ttt@ttt.com").familyName("Hawking").givenName("Elm")
-                .phoneNumber("+18002003456").residentAddress("Univ street").residentCity("Princeton").residentCountry("USA")
-                .residentPostalCode("08836").residentState("CA").build();
-        PMResponse pmResponse = OTPClient.submit(attributes);
+            OTPResponse pmResponse = OTPClient.submit(request);
 
-        System.out.println(pmResponse);
+            System.out.println(pmResponse);
+        }
+        {
+
+            OTPRequest request = new OTPRequest();
+            request.setPhoneNumOrEmail("manoj_khanwalkar@hotmail.com");
+            request.setType(OTPRequest.Type.Email);
+
+            OTPResponse pmResponse = OTPClient.submit(request);
+
+            System.out.println(pmResponse);
+
+        }
 
     }
 
