@@ -19,10 +19,6 @@ public class OTPManager {
 
     ConcurrentMap<String,IdOTPTimeTuple> idotpexpiryMap = new ConcurrentHashMap<>();
 
-    /*TODO  , create a PQ and scheduled thread to check for expiry and remove if expired, check expiry before validating otp ,
-
-
-     */
 
     ExpiredOTPProcessor expiredOTPProcessor ;
     public OTPManager()
