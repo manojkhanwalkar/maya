@@ -38,6 +38,14 @@ public class PhoneSMS {
 
     }
 
+    public static void main(String[] args) {
+
+        PhoneSMS phoneSMS = new PhoneSMS();
+
+        String id = phoneSMS.send("+17327620499");
+
+        System.out.println(id);
+    }
 
 
 
