@@ -16,7 +16,7 @@ public class VelocityStatsManager {
     String attribute;  // ccv or ip
 
     Map<String,HistoricalCount> historicalCountMap = new HashMap<>();
-    Map<String, CurrentCount> currentCountMap = new HashMap<>();
+    Map<String, CurrentCount> currentCountMap = new java.util.concurrent.ConcurrentHashMap<>();
 
 
 

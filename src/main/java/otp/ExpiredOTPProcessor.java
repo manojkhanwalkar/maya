@@ -18,18 +18,20 @@ public class ExpiredOTPProcessor {
 
     }
 
-    public void add(IdOTPTimeTuple tuple)
+    public synchronized void add(IdOTPTimeTuple tuple)
     {
         queue.add(tuple);
     }
 
-    public void cleanup()
+    public synchronized void cleanup()
     {
         long curr = System.currentTimeMillis();
         while(!queue.isEmpty())
         {
             if (queue.peek().getExpiryTime() < curr) {
-                System.out.println("Removing expired otp " + queue.remove());
+                // drop it from the lookup map too, otherwise unused OTPs accumulate forever
+                IdOTPTimeTuple expired = queue.remove();
+                idotpexpiryMap.remove(expired.getId(), expired);
 
             }
             else

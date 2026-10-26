@@ -4,7 +4,6 @@ import com.idealista.fpe.algorithm.ff1.FPE;
 
 import java.security.SecureRandom;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.common.hash.Hashing;
 import data.Token;
@@ -20,7 +19,9 @@ import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA3_512;
 
 public class CardUtil {
 
-    static ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
+    // Card numbers and security codes are secrets: use a CSPRNG. (A ThreadLocalRandom captured
+    // in a static field is also shared across threads, which ThreadLocalRandom does not support.)
+    static final SecureRandom threadLocalRandom = new SecureRandom();
 
     public static String createVCard() {
 
@@ -123,7 +124,9 @@ public class CardUtil {
 
     public static boolean validateCard(String str)
     {
-
+        // PANs are 12-19 decimal digits; reject anything else before parsing.
+        if (str == null || !str.matches("[0-9]{12,19}"))
+            return false;
 
         int[] number = new int[str.length()];
 
@@ -196,7 +199,7 @@ public class CardUtil {
         cardTuple.setEncryptedText(enText);
         cardTuple.setKey(Base64.getEncoder().encodeToString(key));
         cardTuple.setTweak(Base64.getEncoder().encodeToString(tweak));
-        cardTuple.setType(Token.Type.FPE1);
+        cardTuple.setType(Token.Type.FPE);
 
         return cardTuple;
 
@@ -308,13 +311,15 @@ public class CardUtil {
 
         hashCardTuple.setPan(payload);
 
+        hashCardTuple.setType(Token.Type.Hash);
+
         return hashCardTuple;
 
 
     }
 
 
-    static ThreadLocalRandom random = ThreadLocalRandom.current();
+    static final SecureRandom random = new SecureRandom();
 
     static int number = 0;
     public static int createEin()
@@ -327,7 +332,7 @@ public class CardUtil {
 
     public static long createTin()
     {
-        return random.nextLong(Long.MAX_VALUE);
+        return random.longs(1, 0, Long.MAX_VALUE).findFirst().getAsLong();
     }
 
 

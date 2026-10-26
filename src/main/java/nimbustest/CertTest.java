@@ -245,7 +245,7 @@ public class CertTest {
                 .keyID(UUID.randomUUID().toString())
                 .build();
 
-        System.out.println(jwk.toJSONObject().toJSONString());
+        System.out.println(jwk.toJSONString());
     }
 
     public static void test2() throws Exception

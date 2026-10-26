@@ -1,10 +1,11 @@
 package otp.sms;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.security.SecureRandom;
 
 public class SMSUtil {
 
-    static ThreadLocalRandom random = ThreadLocalRandom.current();
+    // OTPs must be unpredictable: use a CSPRNG.
+    static final SecureRandom random = new SecureRandom();
 
 
     public static String OTPString()

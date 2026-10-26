@@ -13,7 +13,9 @@ public class JSONUtil {
 
     static {
         mapper.registerModule(new JavaTimeModule());
-        mapper.enableDefaultTyping();
+        // Polymorphic default typing is deliberately NOT enabled: payloads come from remote
+        // callers, and default typing lets them pick the class Jackson instantiates
+        // (deserialization gadget chains -> remote code execution).
     }
 
 

@@ -61,7 +61,7 @@ public class CMResource {
     public OfferResponse offer(OfferRequest orequest , @Context HttpServletRequest request) {
 
 
-        System.out.println("Called offer for " + request.getHeader("ClickResponse") );
+        System.out.println("Called offer");
         return new OfferResponse();
 
     }

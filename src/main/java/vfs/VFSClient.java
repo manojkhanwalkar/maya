@@ -44,7 +44,7 @@ public class VFSClient {
 
         Optional<String> result = app.sendSimple(JSONUtil.toJSON(transactionData),"transaction");
 
-        System.out.println(result);
+        // do not print the result: it echoes the attribute values, which include card numbers
 
         if (result.isPresent())
             return (VelocityStatsList) JSONUtil.fromJSON(result.get(),VelocityStatsList.class);

@@ -23,8 +23,14 @@ public class Connection {
 
     private void initConnectionProps()
     {
-        final Properties props = System.getProperties();
-        props.setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
+        // Hostname verification stays ON unless explicitly disabled for local development with
+        // self-signed certificates (MAYA_TLS_DISABLE_HOSTNAME_VERIFICATION=true). The old code turned it
+        // off JVM-wide unconditionally, which lets anyone with a valid certificate for any name
+        // impersonate the PM/VFS/vault services.
+        if (Boolean.parseBoolean(System.getenv("MAYA_TLS_DISABLE_HOSTNAME_VERIFICATION"))) {
+            final Properties props = System.getProperties();
+            props.setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
+        }
 
     }
 
@@ -63,8 +69,6 @@ public class Connection {
             HttpResponse<String> response =
                     client.send(httprequest, HttpResponse.BodyHandlers.ofString());
 
-
-            System.out.println(response);
 
            if (response.statusCode()==200)
                return Optional.of(response.body());
