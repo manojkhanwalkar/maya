@@ -25,7 +25,6 @@ public class PMClient {
 
         Optional<String> result = app.sendSimple(JSONUtil.toJSON(pmRequest),"verify1");
 
-       System.out.println(result);
 
        if (result.isPresent())
        {

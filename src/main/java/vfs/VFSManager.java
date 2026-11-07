@@ -78,10 +78,19 @@ public class VFSManager {
 
         VelocityStatsList velocityStatsList = new VelocityStatsList();
 
+        if (transactionData == null || transactionData.getAttrValueMap() == null)
+            return velocityStatsList;
+
         transactionData.getAttrValueMap().entrySet().stream().forEach(entry->{
 
             String key = entry.getKey();
             String value = entry.getValue();
+
+            // Only the configured attributes are tracked, and values are written one per line to
+            // the day files: reject unknown attributes and values that could inject extra lines
+            // or grow the in-memory counters without bound.
+            if (!isAcceptable(key, value))
+                return;
 
             fileManager.write(key,value);
 
@@ -99,6 +108,15 @@ public class VFSManager {
 
         return velocityStatsList;
 
+    }
+
+    static final int MAX_VALUE_LENGTH = 64;
+
+    private boolean isAcceptable(String key, String value)
+    {
+        return key != null && Arrays.asList(attributes).contains(key)
+                && value != null && !value.isEmpty() && value.length() <= MAX_VALUE_LENGTH
+                && value.chars().noneMatch(Character::isISOControl);
     }
 
     public static void main(String[] args) {

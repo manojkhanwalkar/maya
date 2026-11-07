@@ -60,7 +60,6 @@ public class JWUtil {
 
             var jweObject = new JWEObject(jweHeader, new Payload(payload));
 
-            System.out.println("JWE header: " + jweHeader.toJSONObject());
             jweObject.encrypt(new ECDHEncrypter(encrypterKey.toECKey()));
 
 
@@ -164,7 +163,6 @@ public class JWUtil {
             var verifier = new ECDSAVerifier(publicKey.toECKey());
 
             if (jwsObject.verify(verifier)) {
-                System.out.println("Receiver successfully verified signature");
                 return Optional.of(jwsObject.getPayload().toString());
             }
         } catch (ParseException e) {

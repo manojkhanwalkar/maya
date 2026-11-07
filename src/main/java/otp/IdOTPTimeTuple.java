@@ -8,6 +8,11 @@ public class IdOTPTimeTuple implements Comparable<IdOTPTimeTuple> {
     String id;
     String OTP;
     long expiryTime;
+    final java.util.concurrent.atomic.AtomicInteger failedAttempts = new java.util.concurrent.atomic.AtomicInteger();
+
+    public int incrementFailedAttempts() {
+        return failedAttempts.incrementAndGet();
+    }
 
     public IdOTPTimeTuple(String id, String OTP) {
         this.id = id;
@@ -55,7 +60,6 @@ public class IdOTPTimeTuple implements Comparable<IdOTPTimeTuple> {
     public String toString() {
         return "IdOTPTimeTuple{" +
                 "id='" + id + '\'' +
-                ", OTP='" + OTP + '\'' +
                 ", expiryTime=" + expiryTime +
                 '}';
     }

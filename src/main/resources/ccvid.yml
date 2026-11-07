@@ -1,3 +1,5 @@
+# Requires env vars MAYA_KEYSTORE_PATH and MAYA_KEYSTORE_PASSWORD (startup fails if unset).
+# Outbound calls verify TLS hostnames; for self-signed local certs set MAYA_TLS_DISABLE_HOSTNAME_VERIFICATION=true.
 template: Hello, %s!
 defaultName: Stranger
 
@@ -7,8 +9,8 @@ server:
   applicationConnectors:
     - type: https
       port: 8180
-      keyStorePath: /home/manoj/IdeaProjects/securitytest/src/main/resources/mytestkey.jks
-      keyStorePassword: password
+      keyStorePath: ${MAYA_KEYSTORE_PATH}
+      keyStorePassword: ${MAYA_KEYSTORE_PASSWORD}
     #this requires the alpn-boot library on the JVM's boot classpath
     #- type: h2
     #  port: 8445
@@ -16,6 +18,8 @@ server:
     #  keyStorePassword: example
   adminConnectors:
     - type: https
+      # admin port (metrics, thread dumps, tasks) is reachable from this host only
+      bindHost: 127.0.0.1
       port: 8181
-      keyStorePath: /home/manoj/IdeaProjects/securitytest/src/main/resources/mytestkey.jks
-      keyStorePassword: password
+      keyStorePath: ${MAYA_KEYSTORE_PATH}
+      keyStorePassword: ${MAYA_KEYSTORE_PASSWORD}

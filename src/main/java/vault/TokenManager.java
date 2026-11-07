@@ -1,7 +1,6 @@
 package vault;
 
 import data.Token;
-import org.checkerframework.checker.nullness.Opt;
 import util.CardTuple;
 import util.CardUtil;
 import util.FPECardTuple;
@@ -71,52 +70,39 @@ public class TokenManager {
 
     public Optional<String> get(String merchandId , Token token)
     {
+        if (merchandId == null || token == null || token.getType() == null || token.getValue() == null)
+            return Optional.empty();
 
         ConcurrentMap<String,CardTuple> tokenCCMap = merchantTokenCCMap.get(merchandId);
-        if (tokenCCMap!=null)
+        if (tokenCCMap == null)
+            return Optional.empty();
+
+        CardTuple tuple = tokenCCMap.get(token.getValue());
+        if (tuple == null)
+            return Optional.empty();
+
+        // Each case returns; a token must be detokenized only with the scheme it was created with
+        // (the old switch fell through, so e.g. an FPE1 lookup could run FPE or hash handling).
+        switch (token.getType())
         {
-            switch(token.getType())
-            {
-                case FPE1 : {
+            case FPE1:
+                if (tuple instanceof FPECardTuple && tuple.getType() == Token.Type.FPE1)
+                    return Optional.of(CardUtil.FPEdecrypt1((FPECardTuple) tuple));
+                return Optional.empty();
 
-                    FPECardTuple fpeCardTuple = (FPECardTuple)tokenCCMap.get(token.getValue());
-                    if (fpeCardTuple != null) {
-                        String pan = CardUtil.FPEdecrypt1(fpeCardTuple);
+            case FPE:
+                if (tuple instanceof FPECardTuple && tuple.getType() == Token.Type.FPE)
+                    return Optional.of(CardUtil.FPEdecrypt((FPECardTuple) tuple));
+                return Optional.empty();
 
-                        return Optional.of(pan);
-                    }
-                }
+            case Hash:
+                if (tuple instanceof HashCardTuple && CardUtil.ValidateSHA3HashWithSalt((HashCardTuple) tuple))
+                    return Optional.of(((HashCardTuple) tuple).getPan());
+                return Optional.empty();
 
-                case FPE : {
-                    FPECardTuple fpeCardTuple = (FPECardTuple)tokenCCMap.get(token.getValue());
-                    if (fpeCardTuple != null) {
-                        String pan = CardUtil.FPEdecrypt(fpeCardTuple);
-
-                        return Optional.of(pan);
-                    }
-
-                }
-
-                case Hash:
-                {
-                    HashCardTuple hashCardTuple = (HashCardTuple) tokenCCMap.get(token.getValue());
-                    if (hashCardTuple != null && CardUtil.ValidateSHA3HashWithSalt(hashCardTuple)) {
-
-
-                        return Optional.of(hashCardTuple.getPan());
-                    }
-
-                }
-
-
-
-
-            }
-
-
+            default:
+                return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
 }
